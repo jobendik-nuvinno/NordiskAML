@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ACTOR, assignToMe, requestDocument, retrySource } from '../../api/fakeServer'
 import { reportConcern } from '../../api/restrictedServer'
-import { analyseOwnership, evaluateBlockers, OUTCOME_LABEL, SECTOR_LABEL, serviceLabel } from '../../domain/rules'
+import { activeDecision, analyseOwnership, evaluateBlockers, OUTCOME_LABEL, SECTOR_LABEL, serviceLabel } from '../../domain/rules'
 import type { Case, Role, Signal } from '../../domain/types'
 import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
@@ -145,7 +145,8 @@ function NextAction({ c, busy, retry, request, openHits, unresolved, openReq, go
         <button onClick={() => go('decision')} className={primary}>Gå til beslutning</button>
       </>
     case 'decided': {
-      const d = c.decisions[0]
+      const d = activeDecision(c)
+      if (!d) return null
       return <>
         <p className={p}><b>{OUTCOME_LABEL[d.outcome]}</b> · besluttet av {d.actor} {fmt(d.at)}.</p>
         <button onClick={() => go('history')} className={'mt-4 w-full ' + btn.outlineGreen}>Se historikk og låst grunnlag</button>

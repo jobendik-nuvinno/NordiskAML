@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ACTOR, decide } from '../../api/fakeServer'
-import { evaluateBlockers, OUTCOME_LABEL, recommend, reviewState } from '../../domain/rules'
+import { ACTOR, decide, reopenDecision } from '../../api/fakeServer'
+import { activeDecision, evaluateBlockers, OUTCOME_LABEL, recommend, reviewState } from '../../domain/rules'
 import type { Decision, DecisionOutcome } from '../../domain/types'
 import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
@@ -44,7 +44,7 @@ export function SnapshotOverlay({ decision: d, close }: { decision: Decision; cl
         <Panel>
           <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#E2E8ED] px-5 py-4">
             <div>
-              <Label>Låst beslutningsgrunnlag · skrivebeskyttet</Label>
+              <Label>{`Låst beslutningsgrunnlag · versjon ${d.version} · skrivebeskyttet`}</Label>
               <div className="mt-1 text-[16px] font-semibold text-[#26384B]">{s.caseRef} · {OUTCOME_LABEL[d.outcome]}</div>
               <div className="mt-1 text-[11px] text-[#718096]">Fanget {fmt(s.capturedAt)} · besluttet av {d.actor} · anbefaling {OUTCOME_LABEL[s.recommendation]}</div>
             </div>
@@ -53,6 +53,7 @@ export function SnapshotOverlay({ decision: d, close }: { decision: Decision; cl
           <div className="space-y-2 p-5">
             <p className={mono}>SHA-256: {d.sha256}</p>
             <p className="text-[12px] text-[#4E6075]"><b>Begrunnelse:</b> {d.reason}</p>
+            {d.supersededAt && <p className="text-[12px] text-[#4E6075]"><b>Overprøvd</b> {fmt(d.supersededAt)} av {d.supersededBy}: {d.supersededReason}</p>}
           </div>
         </Panel>
         <Panel>
@@ -94,7 +95,11 @@ export function DecisionScreen() {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [snapshot, setSnapshot] = useState<Decision | null>(null)
   const { busy, run } = useCall()
-  const d = c.decisions[0]
+  const [reopenReason, setReopenReason] = useState('')
+  const d = activeDecision(c)
+  const earlier = c.decisions.filter(x => x !== d).reverse()
+  const previous = c.decisions[c.decisions.length - 1]
+  const canReopen = role === 'godkjenner' || role === 'hvitvaskingsansvarlig'
   const measures = outcome === 'etabler' || outcome === 'etabler_med_tiltak' ? (c.risk?.mandatoryMeasures ?? []) : []
   const status = d ? 'Fattet' : blockers.length ? 'Sperret' : 'Klar for beslutning'
   const approver = c.risk?.band === 'høy' ? 'Godkjenner · høy risiko' : c.risk?.band === 'middels' ? 'Godkjenner · forhøyet risiko' : 'Faglig godkjenner'
@@ -116,6 +121,7 @@ export function DecisionScreen() {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[16px] font-semibold text-[#26384B]">{OUTCOME_LABEL[d.outcome]}</span>
                 <Badge tone="green">Beslutning fattet</Badge>
+                <Badge tone="blue">{`Versjon ${d.version}`}</Badge>
                 {d.deviates && <Badge tone="amber">Avviker fra anbefaling</Badge>}
               </div>
               <KeyValues width={120} rows={[
@@ -128,9 +134,24 @@ export function DecisionScreen() {
               <Retention d={d} />
               <p className={mono}>Grunnlagets SHA-256: {d.sha256}</p>
               <button type="button" className={btn.primary} onClick={() => setSnapshot(d)}>Åpne låst beslutningsgrunnlag</button>
+              <Callout tone="blue">Et eventuelt svar til kunden er et separat, lovlig svar. Det gjengir ikke interne begrunnelser, vurderinger eller skjermet rapportering.</Callout>
+              {canReopen && (
+                <div className="border border-[#E2E8ED] p-4">
+                  <SmallTitle title="Overprøv beslutning" copy="Brukes ved feil eller nye opplysninger, f.eks. korrigert identitet. Gjeldende versjon bevares uendret, og saken får et nytt beslutningsgrunnlag." />
+                  <label htmlFor="reopen-reason" className={'mt-3 ' + fieldLabel}>Begrunnelse for overprøving (påkrevd)</label>
+                  <textarea id="reopen-reason" rows={3} className={field} value={reopenReason} onChange={e => setReopenReason(e.target.value)} placeholder="Hva er feil, og hvilket nytt grunnlag foreligger?" />
+                  <button type="button" className={'mt-3 ' + btn.secondary} disabled={busy}
+                    onClick={() => run(() => reopenDecision(role, c.id, reopenReason), 'Beslutningen er overprøvd – ny vurdering kreves')}>
+                    Overprøv beslutning
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="mt-4 space-y-4">
+              {previous && (
+                <Callout tone="green">{`Tidligere beslutning (versjon ${previous.version}) er bevart uendret. Ny beslutning blir versjon ${previous.version + 1}.`}</Callout>
+              )}
               {blockers.length > 0 && (
                 <div className="border-l-2 border-[#B8413E] bg-[#FDF5F4] p-4 text-[12px] leading-6 text-[#754B49]">
                   <b>Beslutning er sperret.</b>
@@ -176,6 +197,20 @@ export function DecisionScreen() {
             </div>
           )}
         </div>
+        {earlier.length > 0 && (
+          <div className="border-t border-[#E2E8ED]">
+            <div className="px-5 py-4"><SmallTitle title="Tidligere versjoner" copy="Overprøvde beslutninger med uendret låst grunnlag." /></div>
+            <Table headers={['Versjon', 'Utfall', 'Besluttet', 'Begrunnelse', 'Overprøvd', 'SHA-256', '']} rows={earlier.map(x => [
+              `Versjon ${x.version}`,
+              OUTCOME_LABEL[x.outcome],
+              <>{x.actor}<div className="text-[11px] text-[#718096]">{fmt(x.at)}</div></>,
+              x.reason,
+              x.supersededAt ? <>{x.supersededBy} · {fmt(x.supersededAt)}<div className="text-[11px] text-[#718096]">{x.supersededReason}</div></> : '–',
+              <span className={mono}>{x.sha256.slice(0, 12)}…</span>,
+              <button type="button" className={btn.link} onClick={() => setSnapshot(x)}>Åpne låst grunnlag</button>,
+            ])} />
+          </div>
+        )}
       </Panel>
       <aside className="space-y-5">
         <Panel className="p-5">

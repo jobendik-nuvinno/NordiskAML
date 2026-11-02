@@ -1,5 +1,5 @@
 import { retrySource } from '../../api/fakeServer'
-import { OUTCOME_LABEL, reviewState } from '../../domain/rules'
+import { activeDecision, OUTCOME_LABEL, reviewState } from '../../domain/rules'
 import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, Metric, Panel, SmallTitle, Table, TestPanel } from '../ui'
@@ -9,8 +9,7 @@ export function MonitoringScreen() {
   const { role, openCase } = useApp()
   const { cases } = useStore()
   const { busy, run } = useCall()
-  const decided = cases.filter(c => c.decisions.length)
-    .map(c => ({ c, d: c.decisions[0] }))
+  const decided = cases.flatMap(c => { const d = activeDecision(c); return d ? [{ c, d }] : [] })
     .sort((a, b) => (a.d.nextReviewAt ?? '9').localeCompare(b.d.nextReviewAt ?? '9'))
   const waiting = cases.filter(c => c.status === 'waiting_source')
   const overdue = decided.filter(x => reviewState(x.d.nextReviewAt) === 'forfalt').length

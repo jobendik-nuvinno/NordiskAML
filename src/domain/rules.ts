@@ -1,6 +1,6 @@
 import type {
   Retention, Country,
-  Blocker, Case, CaseStatus, DecisionOutcome, OwnershipEdge, Party, RiskAssessment, RiskFactor,
+  Blocker, Case, CaseStatus, Decision, DecisionOutcome, OwnershipEdge, Party, RiskAssessment, RiskFactor,
 } from './types'
 
 export const POLICY = 'NO AML-regelpakke v1.0'
@@ -195,6 +195,12 @@ export function nextReview(outcome: DecisionOutcome, risk: RiskAssessment | null
 }
 
 /** En passert dato gir «forfalt», aldri «fornyet» – fornyelse krever en ny kontroll. */
+/** Gjeldende (ikke overprøvde) beslutning. Eldre versjoner ligger urørt i `c.decisions`. */
+export function activeDecision(c: Pick<Case, 'decisions'>): Decision | undefined {
+  const last = c.decisions[c.decisions.length - 1]
+  return last && !last.supersededAt ? last : undefined
+}
+
 export function reviewState(nextReviewAt: string | null, now = new Date().toISOString()): 'ingen' | 'planlagt' | 'forfalt' {
   if (!nextReviewAt) return 'ingen'
   return nextReviewAt < now ? 'forfalt' : 'planlagt'
