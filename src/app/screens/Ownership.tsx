@@ -1,7 +1,7 @@
 import { requestDocument } from '../../api/fakeServer'
 import { analyseOwnership, beneficialOwners, pct, POLICY, UBO_THRESHOLD } from '../../domain/rules'
 import type { OwnershipEdge, Party } from '../../domain/types'
-import { useCall, useStore } from '../../ui/hooks'
+import { useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Callout, Panel, SmallTitle, Table, TestPanel } from '../ui'
 

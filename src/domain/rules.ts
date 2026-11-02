@@ -3,7 +3,7 @@ import type {
   Blocker, Case, CaseStatus, DecisionOutcome, OwnershipEdge, Party, RiskAssessment, RiskFactor,
 } from './types'
 
-export const POLICY = 'NO-legal 1.0 (demo)'
+export const POLICY = 'NO AML-regelpakke v1.0'
 /** Terskel for reell rettighetshaver i aktiv landspakke (demo). */
 export const UBO_THRESHOLD = 0.25
 
@@ -90,7 +90,7 @@ export function assessRisk(c: Case, version = 1, at = new Date().toISOString()):
   const factors: RiskFactor[] = [
     { key: 'kunde', label: 'Kunde', value: foreign ? 'Selskap med utenlandsk eierledd' : 'Norsk selskap, kjent eierstruktur', contribution: foreign ? 15 : 5, source: 'Eiergraf' },
     { key: 'produkt', label: 'Produkt / tjeneste', value: serviceLabel(c.scope.service), contribution: c.scope.service === 'company-transfer' ? 20 : 10, source: 'Oppdragsavgrensning' },
-    { key: 'kanal', label: 'Kanal', value: 'Digital, eID-verifisert representant', contribution: 5, source: 'Demo-eID v1' },
+    { key: 'kanal', label: 'Kanal', value: 'Digital, eID-verifisert representant', contribution: 5, source: 'eID-leverandør (test)' },
     { key: 'land', label: 'Land', value: foreign ? `${c.scope.country} + utenlandsk ledd` : c.scope.country, contribution: foreign ? 10 : 0, source: 'Landpakke' },
     { key: 'forventet_bruk', label: 'Forventet bruk', value: pep ? 'PEP involvert' : 'Engangsoppdrag', contribution: pep ? 25 : 5, source: 'Kundens svar' },
   ]
@@ -176,13 +176,13 @@ export function retentionFor(country: Country, outcome: DecisionOutcome, decided
   if (country === 'NO') {
     const years = enhanced ? 10 : 5
     const basis = enhanced
-      ? 'NO: 10 år når forsterkede kundetiltak gjaldt (hvitvaskingsloven § 30, forskriften § 6-4) – demo'
-      : 'NO: 5 år etter avsluttet forhold eller gjennomført transaksjon (hvitvaskingsloven § 30) – demo'
+      ? 'NO: 10 år når forsterkede kundetiltak gjaldt (hvitvaskingsloven § 30, forskriften § 6-4)'
+      : 'NO: 5 år etter avsluttet forhold eller gjennomført transaksjon (hvitvaskingsloven § 30)'
     return relationship
       ? { years, from: 'Avsluttet kundeforhold', until: null, basis }
       : { years, from: decidedAt, until: addYears(decidedAt, years), basis: `${basis}; ingen etablering, fristen løper fra beslutning` }
   }
-  const basis = country === 'SE' ? 'SE: normalt 5 år (lag 2017:630 kap. 5 §§ 3–4) – demo' : 'DK: 5 år fra opphør (hvidvaskloven § 30) – demo'
+  const basis = country === 'SE' ? 'SE: normalt 5 år (lag 2017:630 kap. 5 §§ 3–4)' : 'DK: 5 år fra opphør (hvidvaskloven § 30)'
   return relationship ? { years: 5, from: 'Avsluttet kundeforhold', until: null, basis } : { years: 5, from: decidedAt, until: addYears(decidedAt, 5), basis }
 }
 

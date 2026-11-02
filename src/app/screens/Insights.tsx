@@ -1,7 +1,7 @@
 import { automationRate, managementReport, type RiskBand } from '../../domain/metrics'
 import { STATUS_LABEL } from '../../domain/rules'
 import type { CaseStatus } from '../../domain/types'
-import { useStore } from '../../ui/hooks'
+import { useStore } from '../hooks'
 import { Badge, Callout, Metric, Panel, SmallTitle, Table, TestPanel } from '../ui'
 
 const pctText = (r: number) => `${Math.round(r * 1000) / 10} %`

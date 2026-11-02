@@ -3,7 +3,7 @@ import { ACTOR, createCheck } from '../../api/fakeServer'
 import { ENABLED_COUNTRIES, SERVICES } from '../../api/seed'
 import { POLICY, SECTOR_LABEL, serviceLabel } from '../../domain/rules'
 import type { Country, Sector } from '../../domain/types'
-import { useCall } from '../../ui/hooks'
+import { useCall } from '../hooks'
 import { useApp } from '../context'
 import { Callout, Label, Panel, SmallTitle, TestPanel, btn, field } from '../ui'
 
@@ -74,7 +74,7 @@ export function ScopeScreen() {
               </select>
             </div>
             <div className={box}><Label>Ansvarlig</Label><div className="mt-1 text-[12px] font-semibold text-[#314357]">{allowed ? ACTOR[role] : 'Saksbehandler'}</div></div>
-            <div className={box}><Label>Registerkilde</Label><div className="mt-1 text-[12px] font-semibold text-[#314357]">{country === 'SE' ? 'Simulert Bolagsverket' : country === 'DK' ? 'Simulert CVR' : 'Simulert Brønnøysund'}</div></div>
+            <div className={box}><Label>Registerkilde</Label><div className="mt-1 text-[12px] font-semibold text-[#314357]">{country === 'SE' ? 'Bolagsverket' : country === 'DK' ? 'CVR' : 'Brønnøysundregistrene'}</div></div>
           </fieldset>
           <div className="mt-5 border border-[#D5E4E1] bg-[#F7FBFA] p-4" aria-live="polite">
             <Label>Forslag fra regelmotor</Label>
@@ -103,7 +103,7 @@ export function ScopeScreen() {
           </div>
         </Panel>
         <Panel className="p-5">
-          <div id="scope-demo"><SmallTitle title="Fiktive demoforetak" copy="Ukjent nummer gir «ikke funnet i simulert register»." /></div>
+          <div id="scope-demo"><SmallTitle title="Foretak i testmiljøet" copy="Testmiljøet inneholder bare fiktive foretak. Ukjent nummer gir «ikke funnet i foretaksregisteret»." /></div>
           <div className="mt-4 divide-y divide-[#E7EDF1] border-y border-[#E7EDF1]">
             {DEMO.map(([nr, name, note]) => (
               <button key={nr} type="button" disabled={!allowed} onClick={() => { setOrgNr(nr); setCountry(nr.startsWith('556') ? 'SE' : 'NO') }}

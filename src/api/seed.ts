@@ -17,9 +17,9 @@ const person = (id: string, name: string, born: string, country: string, source:
 const edge = (from: string, to: string, share: number | null, source: string): OwnershipEdge =>
   ({ id: `${from}>${to}`, from, to, share, controlType: 'eierskap', source, validFrom: '2025-01-01' })
 
-const REG_NO = 'Simulert Brønnøysund (demo)'
-const REG_SE = 'Simulert Bolagsverket (demo)'
-const REG_DK = 'Simulert CVR (demo)'
+const REG_NO = 'Brønnøysundregistrene (testdata)'
+const REG_SE = 'Bolagsverket (testdata)'
+const REG_DK = 'CVR (testdata)'
 
 export const REGISTRY: Record<string, RegistryRecord> = {
   // Demo-hovedløp: 60 % × 60 % = 36 %, utenlandsk ledd uten kjente eiere.
@@ -119,8 +119,8 @@ export const DOCUMENTED_OWNERS: Record<string, { parties: Party[]; edges: Owners
   },
 }
 
-const LIST_PEP = 'Demo-PEP NO 2026-10-01'
-const LIST_SANK = 'Demo-sanksjonsliste 2026-11-01'
+const LIST_PEP = 'PEP-liste NO 2026-10-01'
+const LIST_SANK = 'Sanksjonsliste 2026-11-01'
 
 /** Simulert screeningleverandør: råtreff per org.nr. */
 export const SCREENING: Record<string, ScreeningHit[]> = {

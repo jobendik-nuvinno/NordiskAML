@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { requestDocument } from '../../api/fakeServer'
 import type { Evidence } from '../../domain/types'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, field, fieldLabel, mono, Panel, SmallTitle, Table, TestPanel, type Tone } from '../ui'
 

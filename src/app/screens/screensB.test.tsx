@@ -60,7 +60,7 @@ describe('levende designskjermer B', () => {
     await decide('godkjenner', c.id, 'etabler_med_tiltak', 'Eierskap dokumentert, forsterkede tiltak for utenlandsk ledd.')
     const d = store.state.cases.find(x => x.id === c.id)!.decisions[0]
     const html = render(<DecisionScreen />, c.id, 'godkjenner')
-    for (const t of ['Etabler med forsterkede tiltak', 'Faglig godkjenner Demo', '10 år', 'Planlagt', d.sha256, 'Åpne låst beslutningsgrunnlag', 'Fattet'])
+    for (const t of ['Etabler med forsterkede tiltak', 'Jonas Eide', '10 år', 'Planlagt', d.sha256, 'Åpne låst beslutningsgrunnlag', 'Fattet'])
       expect(html).toContain(t)
     const overlay = renderToString(<SnapshotOverlay decision={d} close={() => {}} />)
     for (const t of ['Låst beslutningsgrunnlag', 'Ola Eksempel', 'Styreleder', 'Reell rettighetshaver', 'Lukk', d.snapshot.evidence[0].sha256])

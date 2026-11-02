@@ -3,7 +3,7 @@ import { ACTOR, assignToMe, requestDocument, retrySource } from '../../api/fakeS
 import { reportConcern } from '../../api/restrictedServer'
 import { analyseOwnership, evaluateBlockers, OUTCOME_LABEL, SECTOR_LABEL, serviceLabel } from '../../domain/rules'
 import type { Case, Role, Signal } from '../../domain/types'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Callout, KeyValues, Label, Panel, SmallTitle, TestPanel, btn, checkTone, field, fieldLabel } from '../ui'
 
@@ -129,7 +129,7 @@ function NextAction({ c, busy, retry, request, openHits, unresolved, openReq, go
     case 'customer_action':
       return <>
         <div className="mt-4 space-y-1">{openReq.map(r => <p key={r.id} className="text-[11px] text-[#536478]"><b>{r.title}</b> · sendt {fmt(r.createdAt)}</p>)}</div>
-        <div className="mt-3"><Callout tone="blue">Venter på kunde. Bytt rolle til «Kunde» for å svare i demoen.</Callout></div>
+        <div className="mt-3"><Callout tone="blue">Venter på kunde. Forespørselen ligger i kundeportalen.</Callout></div>
       </>
     case 'needs_review':
       return <>

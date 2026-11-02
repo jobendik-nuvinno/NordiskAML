@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { portalTasks, saveDraft, submitDocument, type PortalTask } from '../../api/fakeServer'
-import { useCall, useStore } from '../../ui/hooks'
+import { useCall, useStore } from '../hooks'
 import { Badge, Label, Panel, SmallTitle, btn, field, fieldLabel } from '../ui'
 
 /** Ekstern kundeportal. Viser bare hva kunden skal levere – aldri score, status, treff eller sperrer (KYC-06). */
@@ -57,12 +57,12 @@ function TaskCard({ t }: { t: PortalTask }) {
       <div className="mt-4 border border-[#DCE4EB] bg-[#FBFCFD] p-5">
         <div className="text-[16px] font-semibold text-[#26384B]">{t.title}</div>
         <p className="mt-2 max-w-[620px] text-[12px] leading-6 text-[#617188]">{t.text}</p>
-        <label htmlFor={`file-${t.requestId}`} className={fieldLabel + ' mt-5'}>Dokument (behandles lokalt i demoen – ingenting sendes)</label>
+        <label htmlFor={`file-${t.requestId}`} className={fieldLabel + ' mt-5'}>Dokument (PDF eller bilde)</label>
         <input id={`file-${t.requestId}`} type="file" className={field} onChange={e => setFile(e.target.files?.[0] ?? null)} />
         <label htmlFor={`note-${t.requestId}`} className={fieldLabel + ' mt-4'}>Kommentar (valgfritt)</label>
         <textarea id={`note-${t.requestId}`} rows={3} className={field} value={draft} onChange={e => setDraft(e.target.value)} />
         <div className="mt-5 flex flex-wrap gap-2">
-          <button disabled={busy} onClick={send} className={btn.primary}>{file ? 'Send dokument' : 'Send eksempeldokument'}</button>
+          <button disabled={busy} onClick={send} className={btn.primary}>{file ? 'Send dokument' : 'Send uten vedlegg'}</button>
           <button disabled={busy} onClick={() => run(() => saveDraft('kunde', t.caseId, t.requestId, draft), 'Utkastet er lagret – du kan fortsette senere')} className={btn.secondary}>Lagre utkast</button>
         </div>
       </div>

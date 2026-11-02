@@ -1,5 +1,5 @@
 import { evaluateBlockers, OUTCOME_LABEL, recommend } from '../../domain/rules'
-import { fmt, useStore } from '../../ui/hooks'
+import { fmt, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Callout, Metric, Panel, SmallTitle, Table, TestPanel, type Tone } from '../ui'
 

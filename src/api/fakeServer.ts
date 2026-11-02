@@ -131,7 +131,7 @@ async function runStage(c: Case): Promise<StageResult> {
       c.scope.covered = covered
       c.scope.basis = covered === 'uklart'
         ? 'Uklart om rådgivningen er omfattet – sendt til fagansvarlig'
-        : `Hvitvaskingsloven § 4 (demo) · ${c.scope.country}-pakke`
+        : `Hvitvaskingsloven § 4 · ${c.scope.country}-pakke`
       c.scope.responsible = covered === 'uklart' ? 'Fagansvarlig AML' : (c.owner ?? 'Nora Berg')
       setCheck(c, 'formal', { state: covered === 'ja' ? 'ok' : 'open', detail: c.scope.basis, source: 'Oppdragsavgrensning' })
       audit(c, SYSTEM, 'Oppdrag avgrenset', `Omfattet: ${covered}`)
@@ -140,14 +140,14 @@ async function runStage(c: Case): Promise<StageResult> {
     case 'innhente': {
       if (state.faults.registryDown) {
         c.status = 'waiting_source'
-        setCheck(c, 'register', { state: 'waiting', detail: 'Registerkilden svarte HTTP 503. Venter – nytt forsøk ved gjenoppretting.', source: 'Simulert register' })
+        setCheck(c, 'register', { state: 'waiting', detail: 'Registerkilden svarte HTTP 503. Venter – nytt forsøk ved gjenoppretting.', source: 'Foretaksregister' })
         audit(c, SYSTEM, 'Kildeutfall', 'Register svarte 503 – saken står i ventestatus')
         return 'stop'
       }
       const rec = REGISTRY[c.orgNr]
       if (!rec) {
         c.status = 'needs_review'
-        setCheck(c, 'register', { state: 'open', detail: 'Ikke funnet i simulert register', source: 'Simulert register' })
+        setCheck(c, 'register', { state: 'open', detail: 'Ikke funnet i foretaksregisteret', source: 'Foretaksregister' })
         audit(c, SYSTEM, 'Registeroppslag uten treff', c.orgNr)
         return 'stop'
       }
@@ -159,7 +159,7 @@ async function runStage(c: Case): Promise<StageResult> {
       c.edges = structuredClone(rec.edges)
       c.status = 'processing'
       setCheck(c, 'register', { state: 'ok', detail: `${rec.entry.legalName} · ${rec.entry.form} · ${rec.entry.status}`, source: rec.entry.source })
-      setCheck(c, 'identitet', { state: 'ok', detail: `Representant (${rec.entry.roles[0]?.name}) verifisert, nivå høyt · fullmakt: ${rec.entry.roles[0]?.role}`, source: 'Demo-eID v1' })
+      setCheck(c, 'identitet', { state: 'ok', detail: `Representant (${rec.entry.roles[0]?.name}) verifisert, nivå høyt · fullmakt: ${rec.entry.roles[0]?.role}`, source: 'eID-leverandør (test)' })
       c.evidence.push({
         id: uuid(), kind: 'register', title: `Registerutskrift ${rec.entry.legalName}`,
         sha256: await sha256(JSON.stringify(c.registry)), collectedAt: fetchedAt, source: rec.entry.source, version: 1,
@@ -199,8 +199,8 @@ function controlScreening(c: Case) {
   const open = c.screening.filter(h => h.status === 'open' || (h.list === 'Sanksjon' && h.status === 'confirmed'))
   const confirmed = c.screening.filter(h => h.status === 'confirmed')
   setCheck(c, 'screening', open.length
-    ? { state: 'open', detail: `${open.length} treff til vurdering`, source: 'Demo-lister 2026-11-01' }
-    : { state: 'ok', detail: c.screening.length ? `${c.screening.length} treff avklart${confirmed.length ? ` (${confirmed.length} bekreftet)` : ''}` : 'Ingen treff i PEP- og sanksjonslister', source: 'Demo-lister 2026-11-01' })
+    ? { state: 'open', detail: `${open.length} treff til vurdering`, source: 'Screeninglister 2026-11-01' }
+    : { state: 'ok', detail: c.screening.length ? `${c.screening.length} treff avklart${confirmed.length ? ` (${confirmed.length} bekreftet)` : ''}` : 'Ingen treff i PEP- og sanksjonslister', source: 'Screeninglister 2026-11-01' })
 }
 
 function prepare(c: Case) {

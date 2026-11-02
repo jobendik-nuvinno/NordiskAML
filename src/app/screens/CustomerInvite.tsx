@@ -1,6 +1,6 @@
 import { requestDocument } from '../../api/fakeServer'
 import { analyseOwnership } from '../../domain/rules'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Callout, Panel, SmallTitle, Table, TestPanel, btn, mono } from '../ui'
 

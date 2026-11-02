@@ -1,5 +1,5 @@
 import { commercialView } from '../../domain/metrics'
-import { useStore } from '../../ui/hooks'
+import { useStore } from '../hooks'
 import { Badge, Callout, Metric, Panel, SmallTitle, Table, TestPanel } from '../ui'
 
 /**

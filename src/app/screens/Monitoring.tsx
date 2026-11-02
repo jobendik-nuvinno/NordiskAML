@@ -1,6 +1,6 @@
 import { retrySource } from '../../api/fakeServer'
 import { OUTCOME_LABEL, reviewState } from '../../domain/rules'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, Metric, Panel, SmallTitle, Table, TestPanel } from '../ui'
 
@@ -57,7 +57,7 @@ export function MonitoringScreen() {
               <button type="button" disabled={busy} className={btn.outlineGreen} onClick={() => run(() => retrySource(role, c.id), 'Nytt forsøk startet')} aria-label={`Prøv kilden igjen for ${c.name}`}>Prøv kilden igjen</button>,
             ])} />}
           <div className="border-t border-[#E2E8ED] px-5 py-4 text-[11px] text-[#617188]">
-            Demo: bryteren for registerfeil (503) i sidemenyen styrer om kilden svarer. Er feilen fortsatt på, gir nytt forsøk 503 og saken blir stående.
+            Kilden hentes på nytt fra siste bekreftede posisjon – det opprettes ingen ny kontroll. Er feilen fortsatt på, gir nytt forsøk 503 og saken blir stående.
           </div>
         </Panel>
       </div>

@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
 import { closeInvestigation, readInvestigations, reportConcern, restrictedStore, updateInvestigation } from '../../api/restrictedServer'
 import type { Investigation, Role, Signal } from '../../domain/types'
-import { fmt, useCall } from '../../ui/hooks'
+import { fmt, useCall } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, field, fieldLabel, KeyValues, Label, Panel, SmallTitle, Table, TestPanel, type Tone } from '../ui'
 
@@ -23,7 +23,7 @@ export function InvestigationScreen() {
       <aside className="space-y-5">
         <Panel className="p-5">
           <SmallTitle title="Tilgangstest" copy="Vanlig bruker, kunde, partner og support kan ikke utlede at denne saken eksisterer." />
-          <div className="mt-4"><Callout tone="red">AT-07 · ingen avsløring: ordinært søk, partner-API, portal og support returnerer ikke status, metadata eller treff på skjermet undersøkelse. Utenfor tilgangsgruppen svarer tjenesten som om ressursen ikke finnes.</Callout></div>
+          <div className="mt-4"><Callout tone="red">Ingen avsløring: ordinært søk, partner-API, portal og support returnerer ikke status, metadata eller treff på skjermet undersøkelse. Utenfor tilgangsgruppen svarer tjenesten som om ressursen ikke finnes.</Callout></div>
         </Panel>
         <TestPanel entries={['Undersøkelse har eget livsløp og tilgangsregel.', 'Ugjennomsiktige referanser brukes mot vanlig sak.', 'Rapportutkast krever AML-ansvarlig og korrekt kanal.']} />
       </aside>
@@ -146,7 +146,7 @@ function Detail({ inv, role, back }: { inv: Investigation; role: Role; back: () 
             <input id="i-note" className={field} value={note} disabled={closed} onChange={e => setNote(e.target.value)} /></div>
           <div className="flex flex-wrap gap-2">
             <button type="button" className={btn.primary} disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { finding, hypothesis, priority }, note), 'Undersøkelsen er oppdatert').then(() => setNote(''))}>Lagre</button>
-            {!inv.owner && <button type="button" className={btn.secondary} disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { owner: 'Hvitvaskingsansvarlig Demo' }), 'Du er eier')}>Ta eierskap</button>}
+            {!inv.owner && <button type="button" className={btn.secondary} disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { owner: 'Marius A. Viken' }), 'Du er eier')}>Ta eierskap</button>}
           </div>
           <div className="pt-2"><SmallTitle title="Avslutning" /></div>
           {inv.conclusion ? (

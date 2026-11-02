@@ -55,7 +55,7 @@ describe('levende designskjermer C', () => {
     await decideSund()
     html = render(<HistoryScreen />, 'saksbehandler', c.id)
     expect(html).toContain('Åpne eksakt beslutningsgrunnlag')
-    expect(html).toContain('Simuler senere registerendring')
+    expect(html).toContain('Oppdater registerdata')
     expect(html).toContain(`${c.decisions[0].retention.years} år`)
     expect(html).toContain('Planlagt')
   })

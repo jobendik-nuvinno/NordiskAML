@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ACTOR } from '../../api/fakeServer'
 import { evaluateBlockers, queueKind, SECTOR_LABEL, serviceLabel, sortQueue } from '../../domain/rules'
-import { fmtDate, useStore } from '../../ui/hooks'
+import { fmtDate, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Metric, Panel, SmallTitle, Table, TestPanel, btn, statusText, statusTone } from '../ui'
 

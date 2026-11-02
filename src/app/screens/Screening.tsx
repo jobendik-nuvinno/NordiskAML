@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { addIdentityField, resolveHit } from '../../api/fakeServer'
 import type { Case, Role, ScreeningHit } from '../../domain/types'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, field, fieldLabel, Panel, SmallTitle, Table, TestPanel, type Tone } from '../ui'
 
@@ -41,7 +41,7 @@ function HitPanel({ c, h, role }: { c: Case; h: ScreeningHit; role: Role }) {
             {h.status === 'false_positive' && (
               <button type="button" disabled={busy} className={'mt-3 ' + btn.outlineGreen}
                 onClick={() => run(() => addIdentityField(role, c.id, h.partyId), 'Ny opplysning registrert – treffet er åpnet for revurdering')}>
-                Simuler ny fødselsdato for {party?.name}
+                Registrer ny fødselsdato for {party?.name}
               </button>
             )}
           </div>

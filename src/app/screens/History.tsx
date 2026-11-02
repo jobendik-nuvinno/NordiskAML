@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { registerLaterChange } from '../../api/fakeServer'
 import { OUTCOME_LABEL, reviewState } from '../../domain/rules'
 import type { Decision } from '../../domain/types'
-import { fmt, useCall, useStore } from '../../ui/hooks'
+import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, btn, Callout, checkTone, KeyValues, Label, mono, Panel, SmallTitle, Table, TestPanel } from '../ui'
 
@@ -52,8 +52,8 @@ export function HistoryScreen() {
           </div>
           {d ? (
             <>
-              <div className="mt-4"><Callout tone="green">Demo: registeret kan endre seg etter beslutningen. Det låste beslutningsgrunnlaget endres ikke – åpne det fra loggen og sammenlign.</Callout></div>
-              <button type="button" disabled={busy} onClick={() => run(() => registerLaterChange(role, c.id), 'Registerendring mottatt – låst grunnlag er uendret')} className={'mt-4 w-full ' + btn.outlineGreen}>Simuler senere registerendring</button>
+              <div className="mt-4"><Callout tone="green">Registeret kan endre seg etter beslutningen. Det låste beslutningsgrunnlaget endres ikke – åpne det fra loggen og sammenlign.</Callout></div>
+              <button type="button" disabled={busy} onClick={() => run(() => registerLaterChange(role, c.id), 'Registerendring mottatt – låst grunnlag er uendret')} className={'mt-4 w-full ' + btn.outlineGreen}>Oppdater registerdata</button>
             </>
           ) : null}
         </Panel>

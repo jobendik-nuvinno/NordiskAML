@@ -1,4 +1,4 @@
-import { useStore, fmt } from '../../ui/hooks'
+import { useStore, fmt } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Callout, KeyValues, Panel, SmallTitle, Table, TestPanel, checkTone, mono } from '../ui'
 
@@ -23,7 +23,7 @@ export function IdentityScreen() {
             : <p className="px-5 py-4 text-[11px] text-[#718096]">Registeroppslag er ikke fullført{regCheck ? ` – ${regCheck.detail.toLowerCase()}` : ''}.</p>}
         </Panel>
         <Panel className="p-5">
-          <SmallTitle title="Registeroppføring" copy="Hentet fra simulert foretaksregister. Kilde og tidspunkt følger dataene." />
+          <SmallTitle title="Registeroppføring" copy="Hentet fra foretaksregisteret. Kilde og tidspunkt følger dataene." />
           <div className="mt-4">
             {reg ? (
               <KeyValues width={120} rows={[
