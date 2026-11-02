@@ -1,4 +1,5 @@
 import type {
+  Retention, Country,
   Blocker, Case, CaseStatus, DecisionOutcome, OwnershipEdge, Party, RiskAssessment, RiskFactor,
 } from './types'
 
@@ -161,4 +162,40 @@ export async function sha256(data: string | ArrayBuffer): Promise<string> {
   const buf = typeof data === 'string' ? new TextEncoder().encode(data) : new Uint8Array(data)
   const hash = await crypto.subtle.digest('SHA-256', buf)
   return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// ---------- Oppbevaring (PRV-03) og kontrollkalender (MON-01) ----------
+
+const addYears = (iso: string, y: number) => { const d = new Date(iso); d.setFullYear(d.getFullYear() + y); return d.toISOString() }
+const addMonths = (iso: string, m: number) => { const d = new Date(iso); d.setMonth(d.getMonth() + m); return d.toISOString() }
+
+/** Frist etter land, tiltaksnivå og om et kundeforhold faktisk ble etablert (demo-regler fra §03). */
+export function retentionFor(country: Country, outcome: DecisionOutcome, decidedAt: string): Retention {
+  const enhanced = outcome === 'etabler_med_tiltak'
+  const relationship = outcome === 'etabler' || enhanced
+  if (country === 'NO') {
+    const years = enhanced ? 10 : 5
+    const basis = enhanced
+      ? 'NO: 10 år når forsterkede kundetiltak gjaldt (hvitvaskingsloven § 30, forskriften § 6-4) – demo'
+      : 'NO: 5 år etter avsluttet forhold eller gjennomført transaksjon (hvitvaskingsloven § 30) – demo'
+    return relationship
+      ? { years, from: 'Avsluttet kundeforhold', until: null, basis }
+      : { years, from: decidedAt, until: addYears(decidedAt, years), basis: `${basis}; ingen etablering, fristen løper fra beslutning` }
+  }
+  const basis = country === 'SE' ? 'SE: normalt 5 år (lag 2017:630 kap. 5 §§ 3–4) – demo' : 'DK: 5 år fra opphør (hvidvaskloven § 30) – demo'
+  return relationship ? { years: 5, from: 'Avsluttet kundeforhold', until: null, basis } : { years: 5, from: decidedAt, until: addYears(decidedAt, 5), basis }
+}
+
+export const REVIEW_MONTHS = { lav: 36, middels: 24, høy: 12 } as const
+
+export function nextReview(outcome: DecisionOutcome, risk: RiskAssessment | null, decidedAt: string): string | null {
+  if (outcome === 'avslå' || outcome === 'be_om_mer' || !risk) return null
+  const band = outcome === 'etabler_med_tiltak' && risk.band === 'lav' ? 'middels' : risk.band
+  return addMonths(decidedAt, REVIEW_MONTHS[band])
+}
+
+/** En passert dato gir «forfalt», aldri «fornyet» – fornyelse krever en ny kontroll. */
+export function reviewState(nextReviewAt: string | null, now = new Date().toISOString()): 'ingen' | 'planlagt' | 'forfalt' {
+  if (!nextReviewAt) return 'ingen'
+  return nextReviewAt < now ? 'forfalt' : 'planlagt'
 }

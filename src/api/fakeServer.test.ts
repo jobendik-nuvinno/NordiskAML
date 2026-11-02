@@ -109,4 +109,20 @@ describe('screening (SCR-02/04/05)', () => {
     await resolveHit('godkjenner', c.id, 'hit-ivan-sank', 'confirmed', 'Samsvar bekreftet etter kontroll av pass', '')
     await expect(decide('godkjenner', c.id, 'etabler', 'Lav risiko ellers, ønsker å etablere')).rejects.toMatchObject({ status: 409 })
   })
+
+  it('bekreftet PEP krever at hvert tiltak besvares enkeltvis (RSK-03)', async () => {
+    const c = havbris()
+    await resolveHit('godkjenner', c.id, 'hit-jon-pep', 'confirmed', 'Samme person, verv bekreftet i kilde', '')
+    await resolveHit('godkjenner', c.id, 'hit-ivan-sank', 'false_positive', 'Ulikt land og stavemåte, verifisert mot pass', '2027-05-01')
+    expect(c.risk?.mandatoryMeasures.length).toBe(2)
+    await expect(decide('godkjenner', c.id, 'etabler_med_tiltak', 'Samlet: alt er vurdert og i orden')).rejects.toMatchObject({ status: 422 })
+    await decide('godkjenner', c.id, 'etabler_med_tiltak', 'PEP med dokumenterte midler', {
+      'Kilde til midler og formue': 'Salg av bolig, kontrakt mottatt',
+      'Godkjenning fra ledelse': 'Godkjent av partner 02.11',
+    })
+    const d = c.decisions[0]
+    expect(d.measures).toHaveLength(2)
+    expect(d.retention.years).toBe(10)
+    expect(d.nextReviewAt).not.toBeNull()
+  })
 })

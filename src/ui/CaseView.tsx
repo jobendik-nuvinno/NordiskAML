@@ -3,7 +3,7 @@ import {
   ACTOR, addIdentityField, assignToMe, decide, resolveHit, registerLaterChange, requestDocument, retrySource, STAGE_LABEL, STAGES,
 } from '../api/fakeServer'
 import {
-  analyseOwnership, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, SECTOR_LABEL, serviceLabel,
+  analyseOwnership, beneficialOwners, reviewState, evaluateBlockers, OUTCOME_LABEL, pct, recommend, SECTOR_LABEL, serviceLabel,
   UBO_THRESHOLD,
 } from '../domain/rules'
 import type { Case, CheckItem, Decision, DecisionOutcome, OwnershipEdge, Party, Role, ScreeningHit } from '../domain/types'
@@ -334,8 +334,10 @@ function DecisionPanel({ c, role, openSnapshot }: { c: Case; role: Role; openSna
   const rec = recommend(c.risk, blockers)
   const [outcome, setOutcome] = useState<DecisionOutcome>(rec)
   const [reason, setReason] = useState('')
+  const [answers, setAnswers] = useState<Record<string, string>>({})
   const { busy, run } = useCall()
   const d = c.decisions[0]
+  const measures = outcome === 'etabler' || outcome === 'etabler_med_tiltak' ? (c.risk?.mandatoryMeasures ?? []) : []
 
   if (d) return (
     <article>
@@ -343,6 +345,8 @@ function DecisionPanel({ c, role, openSnapshot }: { c: Case; role: Role; openSna
       <p>{d.actor} · {fmt(d.at)}</p>
       <p><b>Begrunnelse:</b> {d.reason}</p>
       <p className="mut">Maskinell anbefaling: {OUTCOME_LABEL[d.recommendation]}{d.deviates && ' – beslutningen avviker, med begrunnelse'}.</p>
+      {d.measures.length > 0 && <><h3>Forsterkede tiltak</h3>{d.measures.map(m => <p key={m.measure}><b>{m.measure}:</b> {m.answer}</p>)}</>}
+      <RetentionInfo d={d} />
       <p className="hash">Grunnlagets SHA-256: {d.sha256}</p>
       <button className="primary" onClick={() => openSnapshot(d)}>Åpne det låste beslutningsgrunnlaget</button>
     </article>
@@ -366,9 +370,21 @@ function DecisionPanel({ c, role, openSnapshot }: { c: Case; role: Role; openSna
         <label htmlFor="reason">Begrunnelse (påkrevd)</label>
         <textarea id="reason" className="form" rows={4} value={reason} onChange={e => setReason(e.target.value)}
           placeholder="Hva bygger beslutningen på?" />
+        {measures.length > 0 && (
+          <fieldset style={{ border: 0, padding: 0 }}>
+            <legend className="bold">Obligatoriske tiltak – besvares enkeltvis</legend>
+            {measures.map((m, i) => (
+              <div key={m}>
+                <label htmlFor={`m-${i}`}>{m}</label>
+                <textarea id={`m-${i}`} className="form" rows={2} value={answers[m] ?? ''} onChange={e => setAnswers({ ...answers, [m]: e.target.value })} />
+              </div>
+            ))}
+            <p className="mut">En samlet kommentar kan ikke kvittere ut et obligatorisk tiltak.</p>
+          </fieldset>
+        )}
         {outcome !== rec && <p className="mut">Du avviker fra anbefalingen ({OUTCOME_LABEL[rec]}). Begrunn avviket.</p>}
         <button className="primary" disabled={busy || blockers.length > 0}
-          onClick={() => run(() => decide(role, c.id, outcome, reason), 'Beslutning registrert og grunnlaget låst')}>
+          onClick={() => run(() => decide(role, c.id, outcome, reason, answers), 'Beslutning registrert og grunnlaget låst')}>
           Fatt beslutning
         </button>
       </article>
@@ -378,6 +394,17 @@ function DecisionPanel({ c, role, openSnapshot }: { c: Case; role: Role; openSna
         <p className="mut">Risiko {c.risk ? `${c.risk.score} (${c.risk.band})` : '–'} · {c.evidence.length} bevis · {c.checks.filter(k => k.state === 'ok').length}/{c.checks.length} kontroller OK</p>
         <p className="mut">Plattformen, en integrasjon eller KI kan ikke fatte sluttbeslutning. Beslutningen låser et øyeblikksbilde av hele grunnlaget.</p>
       </article>
+    </div>
+  )
+}
+
+function RetentionInfo({ d }: { d: Decision }) {
+  const review = reviewState(d.nextReviewAt)
+  return (
+    <div className="note">
+      <b>Oppbevaring:</b> {d.retention.years} år fra {d.retention.until ? fmt(d.retention.from) : d.retention.from.toLowerCase()}
+      {d.retention.until && <> (til {fmt(d.retention.until)})</>}<br /><span className="mut">{d.retention.basis}</span><br />
+      <b>Neste kontroll:</b> {d.nextReviewAt ? <>{fmt(d.nextReviewAt)} <span className={`badge ${review === 'forfalt' ? 'err' : 'neutral'}`}>{review === 'forfalt' ? 'Forfalt' : 'Planlagt'}</span></> : 'Ingen – kundeforhold ikke etablert'}
     </div>
   )
 }

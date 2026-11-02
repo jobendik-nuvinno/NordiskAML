@@ -2,7 +2,7 @@
 id: S10
 title: Oppbevaring, kontrollkalender og forsterkede tiltak
 milestone: M3
-status: planned
+status: active
 requirements: [R-051, R-031, R-027]
 depends_on: [S05]
 blocked_by: ""

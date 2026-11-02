@@ -2,7 +2,7 @@
 // revisjonslogg med korrelasjons-ID, feilbrytere og lagring i localStorage.
 
 import {
-  analyseOwnership, assessRisk, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, sha256,
+  analyseOwnership, assessRisk, nextReview, retentionFor, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, sha256,
 } from '../domain/rules'
 import type {
   AuditEvent, Case, CaseStatus, CheckItem, Country, DecisionOutcome, DecisionSnapshot, Role, Sector, Stage,
@@ -43,7 +43,7 @@ interface State {
   faults: { registryDown: boolean }
 }
 
-const KEY = 'nordisk-aml-demo-v1'
+const KEY = 'nordisk-aml-demo-v2'
 const storage: Storage | null = (() => { try { return globalThis.localStorage ?? null } catch { return null } })()
 const emptyState = (): State => ({ version: 0, seq: 1000, cases: [], faults: { registryDown: false } })
 
@@ -396,13 +396,17 @@ export function addIdentityField(role: Role, caseId: string, partyId: string) {
 
 // ---------- Beslutning (RSK-04) og låst grunnlag (PRV-02) ----------
 
-export function decide(role: Role, caseId: string, outcome: DecisionOutcome, reason: string) {
+export function decide(role: Role, caseId: string, outcome: DecisionOutcome, reason: string, answers: Record<string, string> = {}) {
   return call(role, 'decision.make', async () => {
     const c = getCase(caseId)
     const blockers = evaluateBlockers(c)
     if (blockers.length) throw new ApiError(409, `Åpne sperrer må lukkes før beslutning: ${blockers.map(b => b.label).join(', ')}.`)
     if (c.decisions.length) throw new ApiError(409, 'Saken er allerede besluttet. Overprøving krever nytt grunnlag.')
     if (reason.trim().length < 10) throw new ApiError(422, 'Begrunnelse er påkrevd (minst 10 tegn).')
+    const establishing = outcome === 'etabler' || outcome === 'etabler_med_tiltak'
+    const required = establishing ? (c.risk?.mandatoryMeasures ?? []) : []
+    const missing = required.filter(m => (answers[m] ?? '').trim().length < 5)
+    if (missing.length) throw new ApiError(422, `Obligatoriske tiltak må besvares enkeltvis: ${missing.join(', ')}.`)
     const recommendation = recommend(c.risk, blockers)
     const snapshot: DecisionSnapshot = structuredClone({
       caseRef: c.ref, scope: c.scope, registry: c.registry, parties: c.parties, edges: c.edges, checks: c.checks,
@@ -413,6 +417,9 @@ export function decide(role: Role, caseId: string, outcome: DecisionOutcome, rea
     c.decisions.push({
       id, outcome, recommendation, deviates: outcome !== recommendation, reason: reason.trim(),
       actor: ACTOR[role], at: snapshot.capturedAt, snapshot, sha256: hash,
+      measures: required.map(m => ({ measure: m, answer: answers[m].trim() })),
+      retention: retentionFor(c.scope.country, outcome, snapshot.capturedAt),
+      nextReviewAt: nextReview(outcome, c.risk, snapshot.capturedAt),
     })
     c.evidence.push({ id: uuid(), kind: 'beslutningsgrunnlag', title: `Beslutningsgrunnlag ${c.ref}`, sha256: hash, collectedAt: snapshot.capturedAt, source: 'Plattform', version: 1 })
     c.status = 'decided'

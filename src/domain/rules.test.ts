@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { REGISTRY } from '../api/seed'
-import { analyseOwnership, assessRisk, beneficialOwners, evaluateBlockers, publicStatus, recommend, sortQueue } from './rules'
+import { nextReview, retentionFor, reviewState, analyseOwnership, assessRisk, beneficialOwners, evaluateBlockers, publicStatus, recommend, sortQueue } from './rules'
 import type { Case } from './types'
 
 const rec = (orgNr: string) => REGISTRY[orgNr]
@@ -84,5 +84,22 @@ describe('partnerstatus', () => {
   it('røper ikke interne statuser', () => {
     expect(publicStatus('needs_review')).toBe('processing')
     expect(publicStatus('waiting_source')).toBe('processing')
+  })
+})
+
+describe('oppbevaring og kontrollkalender (PRV-03, MON-01)', () => {
+  it('ordinært og forsterket norsk forhold får ulike frister med hjemmel', () => {
+    const a = retentionFor('NO', 'etabler', '2026-11-02T00:00:00Z')
+    const b = retentionFor('NO', 'etabler_med_tiltak', '2026-11-02T00:00:00Z')
+    expect([a.years, b.years]).toEqual([5, 10])
+    expect(b.basis).toMatch(/forsterkede/)
+    expect(retentionFor('NO', 'avslå', '2026-11-02T00:00:00Z').until?.slice(0, 4)).toBe('2031')
+  })
+  it('neste kontroll fra risiko; passert dato er forfalt, ikke fornyet', () => {
+    const risk = { ...assessRisk(caseFrom('5560000101')), band: 'høy' as const }
+    const next = nextReview('etabler', risk, '2025-01-01T00:00:00Z')!
+    expect(next.slice(0, 7)).toBe('2026-01')
+    expect(reviewState(next, '2026-11-02T00:00:00Z')).toBe('forfalt')
+    expect(reviewState(nextReview('avslå', risk, '2025-01-01T00:00:00Z'))).toBe('ingen')
   })
 })

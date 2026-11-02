@@ -153,6 +153,18 @@ export interface Decision {
   at: string
   snapshot: DecisionSnapshot
   sha256: string
+  /** Hvert obligatoriske tiltak besvart enkeltvis (RSK-03). */
+  measures: { measure: string; answer: string }[]
+  retention: Retention
+  nextReviewAt: string | null
+}
+
+export interface Retention {
+  years: number
+  /** Startpunkt: dato hvis kjent, ellers hendelsen fristen løper fra. */
+  from: string
+  until: string | null
+  basis: string
 }
 
 export interface AuditEvent {
