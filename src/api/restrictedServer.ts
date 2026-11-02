@@ -4,7 +4,7 @@
 import type { Investigation, Role, Signal } from '../domain/types'
 import { ACTOR, ApiError, getCase, networkDelay } from './fakeServer'
 
-const KEY = 'nordisk-aml-restricted-v1'
+const KEY = 'nordisk-aml-restricted-v2'
 const ACCESS_GROUP: Role[] = ['hvitvaskingsansvarlig']
 const REPORTERS: Role[] = ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig']
 

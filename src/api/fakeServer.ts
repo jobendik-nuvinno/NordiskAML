@@ -53,7 +53,7 @@ interface State {
   faults: { registryDown: boolean }
 }
 
-const KEY = 'nordisk-aml-demo-v2'
+const KEY = 'nordisk-aml-v3'
 const storage: Storage | null = (() => { try { return globalThis.localStorage ?? null } catch { return null } })()
 const emptyState = (): State => ({ version: 0, seq: 1000, cases: [], faults: { registryDown: false } })
 
