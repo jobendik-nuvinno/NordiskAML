@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import {
-  ACTOR, assignToMe, decide, registerLaterChange, requestDocument, retrySource, STAGE_LABEL, STAGES,
+  ACTOR, addIdentityField, assignToMe, decide, resolveHit, registerLaterChange, requestDocument, retrySource, STAGE_LABEL, STAGES,
 } from '../api/fakeServer'
 import {
   analyseOwnership, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, SECTOR_LABEL, serviceLabel,
   UBO_THRESHOLD,
 } from '../domain/rules'
-import type { Case, CheckItem, Decision, DecisionOutcome, OwnershipEdge, Party, Role } from '../domain/types'
+import type { Case, CheckItem, Decision, DecisionOutcome, OwnershipEdge, Party, Role, ScreeningHit } from '../domain/types'
 import { fmt, useCall, useStore } from './hooks'
 import { statusBadge } from './Workqueue'
 
-const TABS = ['Oversikt', 'Eierskap', 'Risiko', 'Beslutning', 'Historikk'] as const
+const TABS = ['Oversikt', 'Eierskap', 'Screening', 'Risiko', 'Beslutning', 'Historikk'] as const
 type Tab = typeof TABS[number]
 
 export function CaseView({ role, id, back }: { role: Role; id: string; back: () => void }) {
@@ -35,6 +35,7 @@ export function CaseView({ role, id, back }: { role: Role; id: string; back: () 
       </nav>
       {tab === 'Oversikt' && <Overview c={c} role={role} goto={setTab} />}
       {tab === 'Eierskap' && <Ownership c={c} role={role} />}
+      {tab === 'Screening' && <Screening c={c} role={role} />}
       {tab === 'Risiko' && <Risk c={c} />}
       {tab === 'Beslutning' && <DecisionPanel c={c} role={role} openSnapshot={setSnapshot} />}
       {tab === 'Historikk' && <History c={c} role={role} openSnapshot={setSnapshot} />}
@@ -114,6 +115,13 @@ function Overview({ c, role, goto }: { c: Case; role: Role; goto: (t: Tab) => vo
                 </div>
               </div>
             ))}
+          </>
+        )}
+        {c.status === 'needs_review' && c.screening.some(h => h.status !== 'false_positive') && (
+          <>
+            <h2>Screeningtreff</h2>
+            <p>{c.screening.filter(h => h.status === 'open').length} treff må avklares faglig.{c.screening.some(h => h.list === 'Sanksjon' && h.status !== 'false_positive') && <> <b>Sanksjonstreff går i hastekanal.</b></>}</p>
+            <button className="primary" onClick={() => goto('Screening')}>Gå til screening</button>
           </>
         )}
         {c.status === 'needs_review' && c.scope.covered !== 'ja' && (
@@ -226,6 +234,67 @@ function Ownership({ c, role }: { c: Case; role: Role }) {
       <h2>Eierskapsgrunnlag</h2>
       <OwnershipBody subjectId={c.subjectId} parties={c.parties} edges={c.edges} requested={requested}
         onRequest={pid => run(() => requestDocument(role, c.id, pid), 'Forespørsel sendt til kundeportalen')} />
+    </article>
+  )
+}
+
+const HIT_STATUS: Record<ScreeningHit['status'], [string, string]> = {
+  open: ['warn', 'Til vurdering'], false_positive: ['', 'Avklart: falskt treff'], confirmed: ['err', 'Bekreftet treff'],
+}
+
+function Screening({ c, role }: { c: Case; role: Role }) {
+  if (!c.screening.length) return <article><p className="mut">Ingen treff i PEP- og sanksjonslistene{c.checks.find(k => k.key === 'screening')?.state === 'pending' ? ' (ikke kjørt ennå)' : ''}.</p></article>
+  return <div className="stack">{c.screening.map(h => <HitCard key={h.id} c={c} h={h} role={role} />)}</div>
+}
+
+function HitCard({ c, h, role }: { c: Case; h: ScreeningHit; role: Role }) {
+  const [reason, setReason] = useState('')
+  const [validUntil, setValidUntil] = useState(new Date(Date.now() + 180 * 864e5).toISOString().slice(0, 10))
+  const { busy, run } = useCall()
+  const party = c.parties.find(p => p.id === h.partyId)
+  return (
+    <article>
+      <div className="row" style={{ borderTop: 0 }}>
+        <div>
+          <div className="cap">{h.list === 'Sanksjon' ? 'Sanksjon · hastekanal' : 'PEP'} · {h.listVersion}</div>
+          <h2 style={{ margin: 0 }}>{party?.name} ↔ {h.candidate}</h2>
+        </div>
+        <span className={`end badge ${HIT_STATUS[h.status][0]}`}>{HIT_STATUS[h.status][1]}</span>
+      </div>
+      <table>
+        <thead><tr><th>Felt</th><th>Part</th><th>Listekandidat</th><th>Vurdering</th></tr></thead>
+        <tbody>
+          {h.fields.map(f => (
+            <tr key={f.field}><td className="bold">{f.field}</td><td>{f.subject}</td><td>{f.candidate}</td>
+              <td><span className={`badge ${f.match === 'samsvar' ? '' : f.match === 'avvik' ? 'err' : 'warn'}`}>{f.match}</span></td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mut">Matchmetode: {h.method}. {h.list === 'Sanksjon' ? 'Potensielt treff sperrer klarsignal til det er avklart; en lav score kan ikke overstyre.' : 'Bekreftet PEP gir forsterkede tiltak – ikke automatisk avslag.'}</p>
+      {h.resolution ? (
+        <div className="note">
+          <b>{h.status === 'false_positive' ? 'Avklart som falskt treff' : 'Bekreftet'}</b> av {h.resolution.by} {fmt(h.resolution.at)}
+          {h.resolution.validUntil && <> · gyldig til {h.resolution.validUntil}</>}<br />{h.resolution.reason}
+          {h.status === 'false_positive' && (
+            <div style={{ marginTop: 8 }}>
+              <button disabled={busy} onClick={() => run(() => addIdentityField(role, c.id, h.partyId), 'Ny opplysning registrert – treffet er åpnet for revurdering')}>
+                Simuler ny fødselsdato for {party?.name}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          <label htmlFor={`r-${h.id}`}>Begrunnelse (påkrevd)</label>
+          <textarea id={`r-${h.id}`} className="form" rows={2} value={reason} onChange={e => setReason(e.target.value)} placeholder="Hvilke felt skiller personene?" />
+          <label htmlFor={`v-${h.id}`}>Avklaringen gjelder til</label>
+          <input id={`v-${h.id}`} type="date" className="form" style={{ maxWidth: 220 }} value={validUntil} onChange={e => setValidUntil(e.target.value)} />
+          <div className="row" style={{ borderTop: 0 }}>
+            <button disabled={busy} onClick={() => run(() => resolveHit(role, c.id, h.id, 'false_positive', reason, validUntil), 'Treffet er avklart som falskt')}>Avklar som falskt treff</button>
+            <button className="primary" disabled={busy} onClick={() => run(() => resolveHit(role, c.id, h.id, 'confirmed', reason, ''), 'Treffet er bekreftet')}>Bekreft treff</button>
+          </div>
+        </>
+      )}
     </article>
   )
 }

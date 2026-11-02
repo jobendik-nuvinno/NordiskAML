@@ -7,7 +7,7 @@ import {
 import type {
   AuditEvent, Case, CaseStatus, CheckItem, Country, DecisionOutcome, DecisionSnapshot, Role, Sector, Stage,
 } from '../domain/types'
-import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, REGISTRY, SEED_CASES, SERVICES } from './seed'
+import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, REGISTRY, SCREENING, SEED_CASES, SERVICES } from './seed'
 
 export const ACTOR: Record<Role, string> = {
   saksbehandler: 'Saksbehandler Demo',
@@ -21,7 +21,7 @@ export class ApiError extends Error {
   constructor(public status: number, public title: string) { super(title) }
 }
 
-type Perm = 'case.read' | 'case.create' | 'case.update' | 'doc.request' | 'portal.submit' | 'decision.make'
+type Perm = 'case.read' | 'case.create' | 'case.update' | 'doc.request' | 'portal.submit' | 'decision.make' | 'hit.resolve'
 const PERMS: Record<Perm, Role[]> = {
   'case.read': ['saksbehandler', 'godkjenner'],
   'case.create': ['saksbehandler', 'partner'],
@@ -29,6 +29,7 @@ const PERMS: Record<Perm, Role[]> = {
   'doc.request': ['saksbehandler', 'godkjenner'],
   'portal.submit': ['kunde'],
   'decision.make': ['godkjenner'],
+  'hit.resolve': ['saksbehandler', 'godkjenner'],
 }
 
 // ---------- Lager ----------
@@ -153,10 +154,13 @@ async function runStage(c: Case): Promise<StageResult> {
     }
     case 'kontrollere': {
       controlOwnership(c)
-      const open = c.screening.filter(h => h.status === 'open' || (h.list === 'Sanksjon' && h.status !== 'false_positive'))
-      setCheck(c, 'screening', open.length
-        ? { state: 'open', detail: `${open.length} treff til vurdering`, source: 'Demo-lister 2026-11-01' }
-        : { state: 'ok', detail: 'Ingen treff i PEP- og sanksjonslister', source: 'Demo-lister 2026-11-01' })
+      if (c.screening.length === 0) c.screening = structuredClone(SCREENING[c.orgNr] ?? [])
+      if (c.screening.some(h => h.list === 'Sanksjon' && h.status === 'open') && c.urgency !== 'haster') {
+        c.urgency = 'haster'
+        c.dueAt = now()
+        audit(c, SYSTEM, 'Hasteoppgave opprettet', 'Potensielt sanksjonstreff – egen hastekanal, klarsignal sperret')
+      }
+      controlScreening(c)
       audit(c, SYSTEM, 'Kontroller kjørt', 'Eierskap og screening')
       return 'continue'
     }
@@ -174,6 +178,14 @@ function controlOwnership(c: Case) {
   setCheck(c, 'eierskap', a.unresolved.length
     ? { state: 'open', detail: `Uavklart: ${a.unresolved.map(u => name(u.partyId)).join(', ')}`, source: 'Eiergraf' }
     : { state: 'ok', detail: `Reelle rettighetshavere: ${ubo.map(p => `${name(p.partyId)} (${pct(p.total)})`).join(', ') || 'ingen over terskel'}`, source: 'Eiergraf' })
+}
+
+function controlScreening(c: Case) {
+  const open = c.screening.filter(h => h.status === 'open' || (h.list === 'Sanksjon' && h.status === 'confirmed'))
+  const confirmed = c.screening.filter(h => h.status === 'confirmed')
+  setCheck(c, 'screening', open.length
+    ? { state: 'open', detail: `${open.length} treff til vurdering`, source: 'Demo-lister 2026-11-01' }
+    : { state: 'ok', detail: c.screening.length ? `${c.screening.length} treff avklart${confirmed.length ? ` (${confirmed.length} bekreftet)` : ''}` : 'Ingen treff i PEP- og sanksjonslister', source: 'Demo-lister 2026-11-01' })
 }
 
 function prepare(c: Case) {
@@ -344,6 +356,35 @@ export function submitDocument(role: Role, caseId: string, requestId: string, fi
     audit(c, ACTOR[role], 'Kunde leverte dokument', `${name} · sha256 ${ev.sha256.slice(0, 12)}…`)
     controlOwnership(c)
     audit(c, SYSTEM, 'Eierskap kontrollert på nytt', c.checks.find(k => k.key === 'eierskap')!.detail)
+    prepare(c)
+  })
+}
+
+// ---------- Screening: avklaring av treff (SCR-04, SCR-05) ----------
+
+export function resolveHit(role: Role, caseId: string, hitId: string, verdict: 'false_positive' | 'confirmed', reason: string, validUntil: string) {
+  return call(role, 'hit.resolve', () => {
+    const c = getCase(caseId)
+    const h = c.screening.find(x => x.id === hitId)
+    if (!h) throw new ApiError(404, 'Ressurs ikke tilgjengelig')
+    if (reason.trim().length < 10) throw new ApiError(422, 'Begrunnelse er påkrevd (minst 10 tegn).')
+    if (verdict === 'false_positive' && !validUntil) throw new ApiError(422, 'Falsk-treff-avklaring må være tidsavgrenset.')
+    h.status = verdict
+    h.resolution = { reason: reason.trim(), validUntil, by: ACTOR[role], at: now() }
+    audit(c, ACTOR[role], verdict === 'false_positive' ? 'Treff avklart som falskt' : 'Treff bekreftet', `${h.list}: ${h.candidate} · gyldig til ${validUntil || '–'}`)
+    controlScreening(c)
+    prepare(c)
+  })
+}
+
+/** Ny identitetsopplysning (f.eks. fødselsdato) åpner tidligere avklarte treff for parten igjen. */
+export function addIdentityField(role: Role, caseId: string, partyId: string) {
+  return call(role, 'case.update', () => {
+    const c = getCase(caseId)
+    const reopened = c.screening.filter(h => h.partyId === partyId && h.status === 'false_positive')
+    for (const h of reopened) { h.status = 'open'; h.resolution = null }
+    audit(c, ACTOR[role], 'Ny identitetsopplysning registrert', `Fødselsdato oppdatert · ${reopened.length} treff åpnet for revurdering`)
+    controlScreening(c)
     prepare(c)
   })
 }

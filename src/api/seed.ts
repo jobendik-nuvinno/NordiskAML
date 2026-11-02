@@ -1,7 +1,7 @@
 // Simulert register og seed-data. Alle navn og nummer er oppdiktede.
 // Norske org.nr i demoen starter på 1, slik at de aldri kolliderer med ekte org.nr (8xx/9xx).
 
-import type { Country, OwnershipEdge, Party, RegistryEntry, Sector } from '../domain/types'
+import type { Country, OwnershipEdge, Party, RegistryEntry, ScreeningHit, Sector } from '../domain/types'
 
 export interface RegistryRecord {
   entry: Omit<RegistryEntry, 'fetchedAt'>
@@ -64,6 +64,20 @@ export const REGISTRY: Record<string, RegistryRecord> = {
       edge('p-havn', 'p-brygge', 1, REG_NO),
     ],
   },
+  // Screening: navnelikt PEP-treff (mangler fødselsår) og potensielt sanksjonstreff på minoritetseier.
+  '100400501': {
+    entry: {
+      orgNr: '100400501', legalName: 'Havbris Eksempel AS', form: 'Aksjeselskap', status: 'Aktiv',
+      roles: [{ role: 'Daglig leder', name: 'Jon Eksempel' }], source: REG_NO,
+    },
+    subjectId: 'p-havbris',
+    parties: [
+      org('p-havbris', 'Havbris Eksempel AS', '100400501', 'NO', REG_NO),
+      person('p-jon', 'Jon Eksempel', '1966', 'NO', REG_NO),
+      person('p-ivan', 'Ivan Eksempelov', '1970', 'NO', REG_NO),
+    ],
+    edges: [edge('p-jon', 'p-havbris', 0.7, REG_NO), edge('p-ivan', 'p-havbris', 0.3, REG_NO)],
+  },
   '5560000101': {
     entry: {
       orgNr: '5560000101', legalName: 'Sund Eksempel AB', form: 'Aktiebolag', status: 'Aktiv',
@@ -105,6 +119,35 @@ export const DOCUMENTED_OWNERS: Record<string, { parties: Party[]; edges: Owners
   },
 }
 
+const LIST_PEP = 'Demo-PEP NO 2026-10-01'
+const LIST_SANK = 'Demo-sanksjonsliste 2026-11-01'
+
+/** Simulert screeningleverandør: råtreff per org.nr. */
+export const SCREENING: Record<string, ScreeningHit[]> = {
+  '100400501': [
+    {
+      id: 'hit-jon-pep', partyId: 'p-jon', list: 'PEP', listVersion: LIST_PEP, candidate: 'Jon Eksempel (statssekretær)',
+      method: 'Navn + alias, translitterasjon, fødselsår',
+      fields: [
+        { field: 'Navn', subject: 'Jon Eksempel', candidate: 'Jon Eksempel', match: 'samsvar' },
+        { field: 'Fødselsår', subject: '1966', candidate: '–', match: 'mangler' },
+        { field: 'Land', subject: 'NO', candidate: 'NO', match: 'samsvar' },
+      ],
+      status: 'open', resolution: null,
+    },
+    {
+      id: 'hit-ivan-sank', partyId: 'p-ivan', list: 'Sanksjon', listVersion: LIST_SANK, candidate: 'Ivan Eksemplov',
+      method: 'Navn + alias, translitterasjon, fødselsår',
+      fields: [
+        { field: 'Navn', subject: 'Ivan Eksempelov', candidate: 'Ivan Eksemplov', match: 'avvik' },
+        { field: 'Fødselsår', subject: '1970', candidate: '1970', match: 'samsvar' },
+        { field: 'Land', subject: 'NO', candidate: 'RU', match: 'avvik' },
+      ],
+      status: 'open', resolution: null,
+    },
+  ],
+}
+
 export interface SeedCase {
   orgNr: string
   country: Country
@@ -120,6 +163,7 @@ export interface SeedCase {
 export const SEED_CASES: SeedCase[] = [
   { orgNr: '100300401', country: 'NO', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: null, createdHoursAgo: 26, dueInDays: 1 },
   { orgNr: '5560000101', country: 'SE', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: 'Saksbehandler Demo', createdHoursAgo: 50, dueInDays: 2 },
+  { orgNr: '100400501', country: 'NO', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: null, createdHoursAgo: 2, dueInDays: 5 },
   { orgNr: '10000101', country: 'DK', sector: 'legal', service: 'advisory', urgency: 'normal', owner: null, createdHoursAgo: 4, dueInDays: 3, registryDown: true },
 ]
 

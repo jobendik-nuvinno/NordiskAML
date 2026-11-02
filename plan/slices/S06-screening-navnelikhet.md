@@ -2,7 +2,7 @@
 id: S06
 title: Screening – navnelikhet og sanksjonsalarm (stretch)
 milestone: M2
-status: planned
+status: active
 requirements: [R-020, R-022, R-023]
 depends_on: [S05]
 blocked_by: ""
