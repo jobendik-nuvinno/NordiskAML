@@ -11,6 +11,8 @@ export type ScreenId = DesignScreenId | 'insights' | 'portal'
 export interface AppCtx {
   /** Rollen kallene mot den simulerte backenden gjøres som. */
   role: Role
+  /** Innlogget person (navn) – brukes der regler krever ulike personer, f.eks. to godkjennere. */
+  actor: string
   designRole: DesignRole
   fn: UserFunction
   /** Aktiv sak for de sakstilknyttede skjermene (Saksoversikt, Eierskap, Screening …). */

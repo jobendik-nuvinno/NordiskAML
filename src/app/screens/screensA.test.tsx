@@ -16,7 +16,7 @@ beforeAll(async () => { await resetDemo() })
 
 const kystlinje = () => store.state.cases.find(c => c.name === 'Kystlinje Eksempel AS')!
 function render(C: ComponentType, over: Partial<AppCtx> = {}) {
-  const ctx: AppCtx = { role: 'saksbehandler', designRole: 'user', fn: 'saksbehandler', caseId: null, openCase: () => {}, go: () => {}, ...over }
+  const ctx: AppCtx = { role: 'saksbehandler', actor: 'Nora Berg', designRole: 'user', fn: 'saksbehandler', caseId: null, openCase: () => {}, go: () => {}, ...over }
   return renderToString(<Ctx.Provider value={ctx}><C /></Ctx.Provider>)
 }
 

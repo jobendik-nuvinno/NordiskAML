@@ -23,7 +23,7 @@ beforeEach(async () => {
 })
 
 function render(node: ReactNode, role: Role = 'saksbehandler', caseId: string | null = null) {
-  const ctx: AppCtx = { role, designRole: 'user', fn: 'saksbehandler', caseId, openCase: () => {}, go: () => {} }
+  const ctx: AppCtx = { role, actor: 'Nora Berg', designRole: 'user', fn: 'saksbehandler', caseId, openCase: () => {}, go: () => {} }
   return renderToString(<Ctx.Provider value={ctx}>{node}</Ctx.Provider>)
 }
 

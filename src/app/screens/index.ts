@@ -9,6 +9,8 @@ import { HistoryScreen } from './History'
 import { IdentityScreen } from './Identity'
 import { InsightsScreen } from './Insights'
 import { InvestigationScreen } from './Investigation'
+import { LandPacksScreen } from './LandPacks'
+import { MembersScreen } from './Members'
 import { MonitoringScreen } from './Monitoring'
 import { OwnershipScreen } from './Ownership'
 import { PartnerApiScreen } from './PartnerApi'
@@ -35,6 +37,8 @@ export const LIVE: Partial<Record<ScreenId, ComponentType>> = {
   investigation: InvestigationScreen,
   'partner-api': PartnerApiScreen,
   'tenant-audit': TenantAuditScreen,
+  'land-packs': LandPacksScreen,
+  members: MembersScreen,
   insights: InsightsScreen,
   portal: PortalScreen,
 }

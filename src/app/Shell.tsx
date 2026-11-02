@@ -29,11 +29,13 @@ const FUNCTIONS: { id: UserFunction; caption: string }[] = [
   { id: 'hvitvaskingsansvarlig', caption: 'Skjermet sone og innsikt' },
 ]
 
+export const PLATFORM_PEOPLE = ['Ingrid Solheim', 'Henrik Aas'] as const
+
 /** Innlogget person per rolle i testmiljøet. */
-function persona(r: DesignRole, fn: UserFunction): { name: string; title: string } {
+function persona(r: DesignRole, fn: UserFunction, platformPerson: string): { name: string; title: string } {
   if (r === 'user') return { name: ACTOR[fn], title: ROLE_TITLE[fn] }
   if (r === 'admin') return { name: ACTOR.admin, title: ROLE_TITLE.admin }
-  if (r === 'platform') return { name: 'Ingrid Solheim', title: 'Plattformadministrator' }
+  if (r === 'platform') return { name: platformPerson, title: 'Plattformadministrator' }
   return { name: 'Kari Lund', title: 'Kontaktperson hos kunden' }
 }
 
@@ -112,13 +114,14 @@ export function AppShell() {
   const [country, setCountry] = useState<Country>('NO')
   const [toast, closeToast] = useToast()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [platformPerson, setPlatformPerson] = useState<string>(PLATFORM_PEOPLE[0])
 
   const go = (s: ScreenId) => { setScreen(s); setMenuOpen(false); closeToast() }
   const ctx: AppCtx = useMemo(() => ({
-    role: backendRole(designRole, fn), designRole, fn, caseId,
+    role: backendRole(designRole, fn), actor: persona(designRole, fn, platformPerson).name, designRole, fn, caseId,
     openCase: (id, s = 'case') => { setCaseId(id); go(s) },
     go,
-  }), [designRole, fn, caseId])
+  }), [designRole, fn, caseId, platformPerson])
 
   const changeRole = (r: DesignRole) => { setDesignRole(r); go(ROLES[r].defaultScreen) }
   const notice: Notice | null = toast ? { tone: toast.kind === 'err' ? 'locked' : toast.kind, text: toast.text } : null
@@ -148,7 +151,7 @@ export function AppShell() {
             </nav>
             {designRole === 'user' ? <CaseSearch cases={state.cases} open={id => ctx.openCase(id)} /> : <div className="ml-auto" />}
             {state.faults.registryDown && <Badge tone="red">Registerkilde utilgjengelig</Badge>}
-            <UserMenu role={designRole} fn={fn} onRole={changeRole} onFn={setFn} registryDown={state.faults.registryDown} reset={reset} />
+            <UserMenu role={designRole} fn={fn} onRole={changeRole} onFn={setFn} platformPerson={platformPerson} onPlatformPerson={setPlatformPerson} registryDown={state.faults.registryDown} reset={reset} />
           </div>
         </header>
         <div className="mx-auto flex max-w-[1800px]">
@@ -254,12 +257,13 @@ function CaseSearch({ cases, open }: { cases: readonly Case[]; open: (id: string
   )
 }
 
-function UserMenu({ role, fn, onRole, onFn, registryDown, reset }: {
-  role: DesignRole; fn: UserFunction; onRole: (r: DesignRole) => void; onFn: (f: UserFunction) => void; registryDown: boolean; reset: () => void
+function UserMenu({ role, fn, onRole, onFn, platformPerson, onPlatformPerson, registryDown, reset }: {
+  role: DesignRole; fn: UserFunction; onRole: (r: DesignRole) => void; onFn: (f: UserFunction) => void
+  platformPerson: string; onPlatformPerson: (p: string) => void; registryDown: boolean; reset: () => void
 }) {
   const [open, setOpen] = useState(false)
   const ref = useDismiss(open, () => setOpen(false))
-  const me = persona(role, fn)
+  const me = persona(role, fn, platformPerson)
   const initials = me.name.split(' ').map(p => p[0]).filter(ch => /[A-ZÆØÅ]/.test(ch)).slice(0, 2).join('')
   const item = (active: boolean) => 'flex w-full items-start gap-2.5 px-3 py-2 text-left ' + (active ? 'bg-[#EEF8F5] text-[#155D52]' : 'text-[#42536A] hover:bg-[#F6F8FA]')
   return (
@@ -291,6 +295,17 @@ function UserMenu({ role, fn, onRole, onFn, registryDown, reset }: {
                 <button key={f.id} role="menuitemradio" aria-checked={fn === f.id} onClick={() => { onFn(f.id); setOpen(false) }} className={item(fn === f.id)}>
                   <span className={'mt-1 h-1.5 w-1.5 shrink-0 rounded-full ' + (fn === f.id ? 'bg-[#176F61]' : 'bg-transparent')} />
                   <span><b className="block text-[11px]">{ACTOR[f.id]} · {ROLE_TITLE[f.id]}</b><small className="block text-[10px] text-[#718096]">{f.caption}</small></span>
+                </button>
+              ))}
+            </div>
+          )}
+          {role === 'platform' && (
+            <div className="border-b border-[#E7EDF1] py-2">
+              <div className="px-3 pb-1 text-[9px] font-bold tracking-[0.13em] text-[#8592A2]">LOGG INN SOM</div>
+              {PLATFORM_PEOPLE.map(p => (
+                <button key={p} role="menuitemradio" aria-checked={platformPerson === p} onClick={() => { onPlatformPerson(p); setOpen(false) }} className={item(platformPerson === p)}>
+                  <span className={'mt-1 h-1.5 w-1.5 shrink-0 rounded-full ' + (platformPerson === p ? 'bg-[#176F61]' : 'bg-transparent')} />
+                  <span><b className="block text-[11px]">{p}</b><small className="block text-[10px] text-[#718096]">Plattformadministrator</small></span>
                 </button>
               ))}
             </div>

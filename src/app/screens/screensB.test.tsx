@@ -14,7 +14,7 @@ beforeAll(async () => { await resetDemo() })
 
 const byOrg = (orgNr: string) => store.state.cases.find(c => c.orgNr === orgNr)!
 function render(el: ReactElement, caseId: string, role: Role = 'saksbehandler') {
-  const value: AppCtx = {
+  const value: AppCtx = { actor: 'Nora Berg',
     role, designRole: 'user', fn: (role === 'admin' || role === 'kunde' || role === 'partner' ? 'saksbehandler' : role) as UserFunction,
     caseId, openCase: () => {}, go: () => {},
   }
