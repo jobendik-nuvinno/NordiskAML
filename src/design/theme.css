@@ -189,3 +189,22 @@ img.broken-image-fallback {
   outline: 2px solid #176f61;
   outline-offset: 2px;
 }
+
+/* ---------- Finpuss: dybde, bevegelse og interaksjon (innenfor designets farger og former) ---------- */
+body { font-feature-settings: 'cv11', 'ss01'; -webkit-font-smoothing: antialiased; }
+.app-bg {
+  background:
+    radial-gradient(1100px 420px at 78% -160px, rgba(23, 111, 97, 0.07), transparent 70%),
+    radial-gradient(900px 380px at -10% 0%, rgba(23, 59, 91, 0.05), transparent 70%),
+    #f5f7f9;
+}
+button, a, input, select, textarea { transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease; }
+button[class*="bg-[#176F61]"]:hover:not(:disabled) { background-color: #125a4f; box-shadow: 0 6px 16px -8px rgba(23, 111, 97, .55); }
+button[class*="bg-[#173B5B]"]:hover:not(:disabled) { background-color: #102c45; }
+button[class*="border-[#C9D4DE]"]:hover:not(:disabled) { background-color: #f6f8fa; border-color: #aebccb; }
+button[class*="border-[#B9D5CE]"]:hover:not(:disabled) { background-color: #f3faf8; border-color: #8fc2b5; }
+button[class*="border-[#D5A9A6]"]:hover:not(:disabled) { background-color: #fdf5f4; }
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(23, 111, 97, .12); }
+@keyframes screen-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.screen-in { animation: screen-in .28s cubic-bezier(.2, .7, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .screen-in { animation: none; } * { transition: none !important; } }

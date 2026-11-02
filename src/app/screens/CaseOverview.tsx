@@ -9,6 +9,9 @@ import { Badge, Callout, KeyValues, Label, Panel, SmallTitle, TestPanel, btn, ch
 
 const COVERED = { ja: 'Ja', nei: 'Nei', uklart: 'Uklart' } as const
 
+const CHECK_DOT = { ok: 'bg-[#EEF8F5] text-[#176B5B] ring-1 ring-[#BFDCD5]', open: 'bg-[#FCF5E7] text-[#82510E] ring-1 ring-[#E8D39E]', waiting: 'bg-[#FDF1F0] text-[#963531] ring-1 ring-[#E7BBB8]', pending: 'bg-[#F4F7F9] text-[#8692A1] ring-1 ring-[#D7E0E8]' } as const
+const CHECK_GLYPH = { ok: '✓', open: '!', waiting: '×', pending: '…' } as const
+
 export function CaseOverviewScreen() {
   const { cases } = useStore()
   const { caseId } = useApp()
@@ -70,7 +73,8 @@ function CaseOverview({ c }: { c: Case }) {
         <div className="border-b border-[#E2E8ED] px-5 py-4"><SmallTitle title="Kontrollgrunnlag" copy={`Åpne spørsmål og neste handling for ${c.ref}.`} /></div>
         <ul>
           {c.checks.map(k => (
-            <li key={k.key} className="grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-[#E7EDF1] px-5 py-4 last:border-b-0">
+            <li key={k.key} className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] gap-3 border-b border-[#E7EDF1] px-5 py-4 transition-colors last:border-b-0 hover:bg-[#FBFCFD]">
+              <span aria-hidden="true" className={'mt-0.5 grid h-6 w-6 place-items-center rounded-full text-[11px] font-bold ' + CHECK_DOT[k.state]}>{CHECK_GLYPH[k.state]}</span>
               <span>
                 <b className="block text-[12px] text-[#2B3C50]">{k.label}</b>
                 <small className="mt-1 block text-[11px] leading-5 text-[#718096]">{k.detail}</small>

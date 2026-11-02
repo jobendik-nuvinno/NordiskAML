@@ -15,6 +15,7 @@ import { showToast, useStore, useToast } from './hooks'
 import { CASE_SCREENS, Ctx, type AppCtx, type DesignRole, type ScreenId, type UserFunction } from './context'
 import { LIVE } from './screens'
 import { buildHash, parseHash } from './route'
+import { ScreenIcon } from './icons'
 import bullLogo from '../assets/bull-logo.png'
 import { Badge, Label, Panel, SmallTitle, statusText, statusTone } from './ui'
 
@@ -137,8 +138,9 @@ export function AppShell() {
 
   return (
     <Ctx.Provider value={ctx}>
-      <div className="min-h-screen bg-[#F5F7F9] font-sans text-[#172536]">
-        <header className="border-b border-[#DCE4EB] bg-white">
+      <div className="app-bg min-h-screen font-sans text-[#172536]">
+        <header className="sticky top-0 z-20 border-b border-[#DCE4EB] bg-white/95 shadow-[0_1px_0_rgba(23,37,54,0.02),0_8px_24px_-18px_rgba(23,37,54,0.25)] backdrop-blur">
+          <div aria-hidden="true" className="h-[3px] bg-gradient-to-r from-[#173B5B] via-[#176F61] to-[#5BAA97]" />
           <div className="mx-auto flex h-14 max-w-[1800px] items-center gap-5 px-5 lg:px-8">
             <button onClick={() => setMenuOpen(true)} aria-label="Åpne meny" aria-expanded={menuOpen} className="-ml-1 grid h-8 w-8 place-items-center border border-[#DCE4EB] text-[#42536A] lg:hidden">
               <span aria-hidden="true" className="block h-[10px] w-[14px] border-y-2 border-current before:mt-[2px] before:block before:h-[2px] before:bg-current" />
@@ -160,7 +162,7 @@ export function AppShell() {
           {menuOpen && <div className="fixed inset-0 z-30 bg-[#172536]/30 lg:hidden" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
           <aside aria-label="Navigasjon" onKeyDown={e => e.key === 'Escape' && setMenuOpen(false)}
             className={(menuOpen ? 'fixed inset-y-0 left-0 z-40 block shadow-[0_12px_32px_rgba(23,37,54,0.18)]' : 'hidden') + ' w-[270px] shrink-0 border-r border-[#DCE4EB] bg-white lg:static lg:block lg:w-[250px] lg:shadow-none'}>
-            <div className="h-full overflow-y-auto px-4 py-5 lg:sticky lg:top-0 lg:h-[calc(100vh-57px)]">
+            <div className="h-full overflow-y-auto px-4 py-5 lg:sticky lg:top-[60px] lg:h-[calc(100vh-60px)]">
               {menuOpen && (
                 <div className="mb-4 flex items-center justify-between lg:hidden">
                   <img src={bullLogo} alt="Bull" className="h-6 w-auto" />
@@ -187,9 +189,12 @@ export function AppShell() {
                     <div className="space-y-0.5">
                       {group.items.map(item => (
                         <button key={item.id} onClick={() => go(item.id as ScreenId)} aria-current={screen === item.id ? 'page' : undefined}
-                          className={'w-full border-l-2 px-3 py-2 text-left ' + (screen === item.id ? 'border-[#176F61] bg-[#EEF8F5] text-[#165F54]' : 'border-transparent text-[#56677B] hover:bg-[#F6F8FA]')}>
-                          <span className="block text-[11px] font-semibold">{item.label}</span>
-                          {item.caption ? <span className="block pt-0.5 text-[9px] text-[#9A6C1B]">{item.caption}</span> : null}
+                          className={'group flex w-full items-start gap-2.5 border-l-2 px-3 py-2 text-left ' + (screen === item.id ? 'border-[#176F61] bg-[#EEF8F5] text-[#165F54]' : 'border-transparent text-[#56677B] hover:bg-[#F6F8FA] hover:text-[#293B4F]')}>
+                          <ScreenIcon screen={item.id as ScreenId} size={15} className={'mt-px shrink-0 ' + (screen === item.id ? 'text-[#176F61]' : 'text-[#93A1B1] group-hover:text-[#56677B]')} />
+                          <span>
+                            <span className="block text-[11px] font-semibold">{item.label}</span>
+                            {item.caption ? <span className="block pt-0.5 text-[9px] text-[#9A6C1B]">{item.caption}</span> : null}
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -200,13 +205,18 @@ export function AppShell() {
           </aside>
           <main className="min-w-0 flex-1 px-5 py-7 lg:px-8">
             {notice && <div className="mb-5"><NoticeBar notice={notice} dismiss={closeToast} /></div>}
-            <div className="border-b border-[#DDE5EC] pb-5">
-              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1E776A]">{eyebrow(TITLES[screen].eyebrow, CASE_SCREENS.includes(screen) ? current?.ref : undefined)}</div>
-              <h1 className="mt-2 text-[27px] font-semibold tracking-[-0.04em] text-[#172536]">{TITLES[screen].title}</h1>
-              <p className="mt-1.5 max-w-[760px] text-[13px] leading-6 text-[#617188]">{TITLES[screen].copy}</p>
+            <div key={screen} className="screen-in flex items-start gap-4 border-b border-[#DDE5EC] pb-5">
+              <span aria-hidden="true" className="mt-1 hidden h-11 w-11 shrink-0 place-items-center border border-[#C9DEDA] bg-gradient-to-br from-white to-[#EAF6F2] text-[#176F61] shadow-[0_6px_16px_-10px_rgba(23,111,97,0.6)] sm:grid">
+                <ScreenIcon screen={screen} size={20} />
+              </span>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1E776A]">{eyebrow(TITLES[screen].eyebrow, CASE_SCREENS.includes(screen) ? current?.ref : undefined)}</div>
+                <h1 className="mt-1.5 text-[27px] font-semibold tracking-[-0.04em] text-[#172536]">{TITLES[screen].title}</h1>
+                <p className="mt-1 max-w-[760px] text-[13px] leading-6 text-[#617188]">{TITLES[screen].copy}</p>
+              </div>
             </div>
             {CASE_SCREENS.includes(screen) && current && <CaseStrip c={current} />}
-            <div className="pt-6">
+            <div key={screen + (caseId ?? '')} className="screen-in pt-6">
               {Live
                 ? (CASE_SCREENS.includes(screen) && !current ? <NeedCase go={go} /> : <Live />)
                 : <RenderScreen screen={screen as never} notify={staticNotify} country={country} chooseCountry={setCountry} go={s => go(s)} />}
@@ -259,6 +269,13 @@ function CaseSearch({ cases, open }: { cases: readonly Case[]; open: (id: string
   )
 }
 
+const AVATAR: Record<DesignRole, string> = {
+  platform: 'bg-gradient-to-br from-[#2A5C86] to-[#173B5B]',
+  admin: 'bg-gradient-to-br from-[#C8892A] to-[#9A6119]',
+  user: 'bg-gradient-to-br from-[#2A9580] to-[#176F61]',
+  customer: 'bg-gradient-to-br from-[#7E8FA5] to-[#56677B]',
+}
+
 function UserMenu({ role, fn, onRole, onFn, platformPerson, onPlatformPerson, registryDown, reset }: {
   role: DesignRole; fn: UserFunction; onRole: (r: DesignRole) => void; onFn: (f: UserFunction) => void
   platformPerson: string; onPlatformPerson: (p: string) => void; registryDown: boolean; reset: () => void
@@ -271,7 +288,7 @@ function UserMenu({ role, fn, onRole, onFn, platformPerson, onPlatformPerson, re
   return (
     <div ref={ref} className="relative border-l border-[#E2E8ED] pl-5">
       <button onClick={() => setOpen(o => !o)} aria-haspopup="menu" aria-expanded={open} className="flex items-center gap-2.5 text-left">
-        <span className="grid h-7 w-7 place-items-center bg-[#EEF4FA] text-[10px] font-bold text-[#255A81]" aria-hidden="true">{initials}</span>
+        <span className={'grid h-8 w-8 place-items-center text-[10px] font-bold text-white shadow-[inset_0_-2px_0_rgba(0,0,0,0.12)] ' + AVATAR[role]} aria-hidden="true">{initials}</span>
         <span className="hidden text-[10px] leading-4 text-[#637389] sm:block"><b className="block text-[11px] text-[#293B4F]">{me.name}</b>{me.title}</span>
         <span className="text-[10px] text-[#8592A2]" aria-hidden="true">▾</span>
       </button>

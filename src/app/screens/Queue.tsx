@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ACTOR } from '../../api/fakeServer'
-import { evaluateBlockers, queueKind, SECTOR_LABEL, serviceLabel, sortQueue } from '../../domain/rules'
+import { evaluateBlockers, queueKind, serviceLabel, sortQueue } from '../../domain/rules'
 import { fmtDate, useStore } from '../hooks'
 import { useApp } from '../context'
 import { Badge, Metric, Panel, SmallTitle, Table, TestPanel, btn, statusText, statusTone } from '../ui'
@@ -8,6 +8,15 @@ import { Badge, Metric, Panel, SmallTitle, Table, TestPanel, btn, statusText, st
 const KIND_LABEL = { system: 'System (kilde)', kunde: 'Kunde', fag: 'Saksbehandler', ferdig: '—', maskin: 'Plattformen' } as const
 const FILTERS = { alle: 'Alle', fag: 'Krever faglig arbeid', kunde: 'Venter på kunde', system: 'Systemfeil', ferdig: 'Besluttet' } as const
 type Filter = keyof typeof FILTERS
+
+/** Monogram for foretaket – fargen viser landpakken. */
+const MONOGRAM: Record<string, string> = {
+  NO: 'bg-gradient-to-br from-[#2A5C86] to-[#173B5B]',
+  SE: 'bg-gradient-to-br from-[#2A9580] to-[#176F61]',
+  DK: 'bg-gradient-to-br from-[#B0605C] to-[#8E302E]',
+  FI: 'bg-[#7E8FA5]', IS: 'bg-[#7E8FA5]',
+}
+const monogram = (name: string) => name.startsWith('Org.nr') ? '#' : name.split(/\s+/).filter(w => /^[A-ZÆØÅ]/.test(w) && !/^(AS|AB|ApS|Eksempel|Exempel|A\/S)$/.test(w)).map(w => w[0]).slice(0, 2).join('') || name[0]
 
 export function QueueScreen() {
   const { cases } = useStore()
@@ -22,23 +31,26 @@ export function QueueScreen() {
   const rows = shown.map(c => {
     const blocker = c.status !== 'processing' ? evaluateBlockers(c)[0] : undefined
     return [
-      <div key="sak">
-        <div className="flex flex-wrap items-center gap-2">{c.urgency === 'haster' && <Badge tone="red">Haster</Badge>}<span>{c.ref}</span><span className="font-semibold text-[#27384B]">{c.name}</span></div>
-        <div className="mt-1 text-[11px] font-normal text-[#718096]">{c.scope.country} · {SECTOR_LABEL[c.scope.sector]} · {serviceLabel(c.scope.service)}</div>
+      <div key="sak" className="flex min-w-[250px] items-start gap-3">
+        <span aria-hidden="true" className={'mt-0.5 grid h-9 w-9 shrink-0 place-items-center text-[11px] font-bold text-white ' + MONOGRAM[c.scope.country]}>{monogram(c.name)}</span>
+        <div>
+          <div className="flex flex-wrap items-center gap-2">{c.urgency === 'haster' && <Badge tone="red">Haster</Badge>}<span className="whitespace-nowrap font-semibold text-[#27384B]">{c.name}</span></div>
+          <div className="mt-1 whitespace-nowrap text-[11px] font-normal text-[#718096]">{c.ref} · {c.scope.country} · {serviceLabel(c.scope.service)}</div>
+        </div>
       </div>,
       <div key="arsak">
         <Badge tone={statusTone(c.status)}>{statusText(c.status)}</Badge>
         {blocker && <div className="mt-1 text-[11px] text-[#718096]">{blocker.label}</div>}
       </div>,
       KIND_LABEL[queueKind(c)],
-      c.owner ?? <span className="text-[#8692A1]">Ikke tildelt</span>,
-      fmtDate(c.dueAt),
+      <span key="eier" className="whitespace-nowrap">{c.owner ?? <span className="text-[#8692A1]">Ikke tildelt</span>}</span>,
+      <span key="frist" className="whitespace-nowrap">{fmtDate(c.dueAt)}</span>,
       <button key="apne" onClick={() => openCase(c.id)} aria-label={`Åpne ${c.name}`} className="text-[11px] font-bold text-[#176B5B]">Åpne →</button>,
     ]
   })
 
   return (
-    <div className="grid gap-5 2xl:grid-cols-[1.3fr_0.7fr]">
+    <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_320px]">
       <div className="space-y-5">
         <div className="grid gap-4 sm:grid-cols-4">
           <Metric label="Åpne kontroller" value={String(active.length)} help={`${urgent} haster`} tone="blue" />

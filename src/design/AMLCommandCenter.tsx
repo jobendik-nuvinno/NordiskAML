@@ -339,7 +339,7 @@ export function Badge({
     red: 'border-[#E7BBB8] bg-[#FDF1F0] text-[#963531]',
     blue: 'border-[#C8D8E8] bg-[#EEF4FA] text-[#255A81]'
   };
-  return <span className={'inline-flex items-center border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ' + colors[tone]}>{children}</span>;
+  return <span className={'inline-flex items-center gap-1.5 whitespace-nowrap border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full before:bg-current before:opacity-60 ' + colors[tone]}>{children}</span>;
 }
 export function Panel({
   children,
@@ -348,7 +348,7 @@ export function Panel({
   children: any;
   className?: string;
 }) {
-  return <section className={'border border-[#DCE4EB] bg-white ' + className}>{children}</section>;
+  return <section className={'border border-[#DCE4EB] bg-white shadow-[0_1px_2px_rgba(23,37,54,0.04),0_6px_18px_-8px_rgba(23,37,54,0.08)] ' + className}>{children}</section>;
 }
 export function Label({
   children
@@ -384,7 +384,7 @@ export function Metric({
     red: 'bg-[#BA4541]',
     blue: 'bg-[#2D6D9F]'
   };
-  return <Panel className="p-4"><div className="flex items-start justify-between gap-3"><Label>{label}</Label><i className={'mt-1.5 h-2 w-2 rounded-full ' + dot[tone]} /></div><div className="mt-3 text-[25px] font-semibold tracking-[-0.04em] text-[#172536]">{value}</div><div className="mt-1 text-[11px] leading-5 text-[#718096]">{help}</div></Panel>;
+  return <Panel className="relative overflow-hidden p-4 transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[0_2px_4px_rgba(23,37,54,0.05),0_12px_28px_-12px_rgba(23,37,54,0.18)]"><span aria-hidden="true" className={'absolute inset-x-0 top-0 h-[3px] ' + dot[tone]} /><div className="flex items-start justify-between gap-3"><Label>{label}</Label><i className={'mt-1.5 h-2 w-2 rounded-full ' + dot[tone]} /></div><div className="mt-3 text-[28px] font-semibold tabular-nums tracking-[-0.04em] text-[#172536]">{value}</div><div className="mt-1 text-[11px] leading-5 text-[#718096]">{help}</div></Panel>;
 }
 export function Table({
   headers,
@@ -393,7 +393,7 @@ export function Table({
   headers: string[];
   rows: any[][];
 }) {
-  return <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left"><thead className="bg-[#F8FAFB] text-[10px] font-bold uppercase tracking-[0.1em] text-[#758397]"><tr>{headers.map(header => <th key={header} className="px-5 py-3">{header}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={index} className="border-t border-[#E7EDF1] text-[12px] text-[#4E6075]">{row.map((cell, cellIndex) => <td key={cellIndex} className={'px-5 py-3.5 ' + (cellIndex === 0 ? 'font-semibold text-[#27384B]' : '')}>{cell}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left"><thead className="bg-[#F8FAFB] text-[10px] font-bold uppercase tracking-[0.1em] text-[#758397]"><tr>{headers.map(header => <th key={header} className="px-5 py-3">{header}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={index} className="border-t border-[#E7EDF1] text-[12px] text-[#4E6075] transition-colors hover:bg-[#F7FAFA]">{row.map((cell, cellIndex) => <td key={cellIndex} className={'px-5 py-3.5 ' + (cellIndex === 0 ? 'font-semibold text-[#27384B]' : '')}>{cell}</td>)}</tr>)}</tbody></table></div>;
 }
 export function TestPanel({
   title = 'Kontrollregler',
