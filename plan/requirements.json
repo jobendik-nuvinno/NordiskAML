@@ -445,12 +445,10 @@
       "gate": "G2",
       "owner": "Hvitvaskingsansvarlig",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "En korrigert identitet gir ny vurdering, uendret gammel versjon og separat lovlig svar til kunden."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-031",
@@ -537,12 +535,10 @@
       "gate": "G2",
       "owner": "Ansvarlig datakvalitet",
       "test_run": "AT-06",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "En tom eller delvis feed kan ikke gi grønt dashboard selv om selve importjobben svarte OK."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-037",
@@ -967,12 +963,10 @@
       "gate": "G1",
       "owner": "Integrasjonsansvarlig",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Når fullmakten trekkes, opphører oppslag; cache eller annen virksomhets tilgang kan ikke brukes som omvei."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-065",
@@ -1111,12 +1105,10 @@
       "gate": "G1",
       "owner": "Driftsansvarlig",
       "test_run": "AT-14",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Rapport viser tellende minutter, full nevner og brudd. Manglende telemetri flagges, ikke telles som oppetid."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-074",
