@@ -1,19 +1,20 @@
 ---
-updated: 2026-11-02T11:30:00Z
+updated: 2026-11-02T10:26:00Z
 next:
-  - "Oppstart (0:00–0:05): git init, Vite React-TS-skjelett, npm install, commit plan"
-  - "S01 skjelett, simulert backend og arbeidskø"
+  - "Klikk gjennom demo-manuset i PROJECT.md på http://localhost:5180 (npm run dev). Flytt skiver fra review til done når de er bekreftet."
+  - "Test kjerneflyten med bare tastatur (UX-02)"
 waiting_on:
-  - "Teamets godkjenning av plan og omfang (M1 obligatorisk, S06/S07 stretch)"
-  - "Antall personer i teamet: avgjør om S03 og S04 bygges parallelt etter S02"
+  - "Manuell gjennomklikking i nettleser av teamet (S01–S07 står i review)"
 blockers: []
 ---
-Planen er laget, men ingen kode er skrevet ennå. Mappen er ikke et Git-repo. `plan/verify.sh` krever Git,
-så første steg er `git init` og en commit `plan: initial plan from specification`.
+Alle sju skivene er bygget. Hele suiten (`plan/verify.sh -- npm run check`: typesjekk + 30 tester, inkludert
+en røyktest som rendrer hele hovedløpet) passerer på et rent tre. Ingen skive er satt til done, fordi
+UI-et ikke er klikket gjennom i en nettleser.
 
-Kildefiler: `Nordisk_AML_kravspesifikasjon_v1.docx`/`.pdf` (samme innhold), `AML_kravregister.xlsx`
-(84 krav, 14 testløp), `AML_partner_API.yaml` (OpenAPI 3.1, 4 operasjoner og 1 webhook) og
-`AML_prototype.html` (statisk skisse med fire visninger, som vi bygger videre på visuelt).
+S07 ble bygget av en bakgrunnsagent i en egen worktree og flettet inn i main.
 
-Verifikasjonskommando for alle skiver: `npm run check` (= `tsc -b && vitest run`).
-Funksjonsfrys ved 1:15. Deretter følger en kjøring av hele suiten (`plan/verify.sh -- npm run check`) og demo-øving.
+Demo-tips: «Tilbakestill demo» øverst laster seed-dataene på nytt. Gammel localStorage fra en tidligere
+versjon kan mangle Havbris-saken, så trykk Tilbakestill ved første åpning. Partner-API-tilstanden
+(idempotensnøkler, webhook-logg) ligger bare i minnet og tømmes ved omlasting.
+
+Bevisste utelatelser: FIU-rapportering og skjermet undersøkelse (D-003). 65 krav er deferred.
