@@ -2,7 +2,7 @@
 id: S04
 title: Kundeportal – lever etterspurt vedlegg
 milestone: M1
-status: planned
+status: review
 requirements: [R-012, R-050]
 depends_on: [S03]
 blocked_by: ""
@@ -19,9 +19,11 @@ Tidsramme: 0:50–1:00.
 - [ ] Et påbegynt svar kan lagres som utkast og gjenopptas etter at siden er lastet på nytt (KYC-06)
 - [ ] Leveransen lagrer et bevisinnslag med filnavn, SHA-256 (Web Crypto), mottakstid, kilde og versjon (PRV-02)
 - [ ] Etter leveransen blir det uavklarte leddet «Dokumentert», og sperren forsvinner hos saksbehandler
-- [ ] `plan/verify.sh --slice S04 -- npm run check` passerer på et rent tre
+- [x] `plan/verify.sh --slice S04 -- npm run check` passerer på et rent tre
 
 ## Notes
 - Filen leses bare lokalt for å beregne hashen, og ingenting sendes. Uten fil brukes knappen «Send eksempeldokument».
 
 ## Outcome
+Portal med nøytral projeksjon, utkast og SHA-256-bevis levert. Testet i fakeServer.test.ts. Bevis: plan/evidence/20261102T102319Z-5446c07-S04.json.
+Ikke manuelt klikket gjennom i nettleser ennå, og tastatur/skjermleser er ikke testet. Står derfor i review.

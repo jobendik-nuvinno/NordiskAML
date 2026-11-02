@@ -2,7 +2,7 @@
 id: S03
 title: Eierskapsgrunnlag, kontrolltolkning og sperrer
 milestone: M1
-status: planned
+status: review
 requirements: [R-014, R-015, R-016, R-026]
 depends_on: [S02]
 blocked_by: ""
@@ -21,7 +21,7 @@ Tidsramme: 0:35–0:50.
 - [ ] Sperrer evalueres før poengsummen: lav score sammen med uavklart eier gir ikke «Klar for vurdering» (RSK-02)
 - [ ] Knappen «Etterspør vedlegg» oppretter en kundeforespørsel og en hendelse i revisjonsloggen
 - [ ] Enhetstester for økonomisk andel, sirkeldeteksjon og sperrerekkefølge
-- [ ] `plan/verify.sh --slice S03 -- npm run check` passerer på et rent tre
+- [x] `plan/verify.sh --slice S03 -- npm run check` passerer på et rent tre
 
 ## Notes
 - Seed: Fjordlys Eksempel AS ← 60 % Nordkapp Holding Eksempel AS ← 60 % Kari Eksempel (36 %) og 40 % Ola Eksempel (24 %).
@@ -29,3 +29,5 @@ Tidsramme: 0:35–0:50.
 - Grafen tegnes som en liste i stedet for SVG. Det sparer tid og gir et tekstalternativ (UX-02).
 
 ## Outcome
+Eiertre, økonomisk andel per person, sirkel- og manglende-ledd-deteksjon og sperre før poengsum levert. Testet i rules.test.ts. Bevis: plan/evidence/20261102T102318Z-5446c07-S03.json.
+Ikke manuelt klikket gjennom i nettleser ennå, og tastatur/skjermleser er ikke testet. Står derfor i review.
