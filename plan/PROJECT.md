@@ -8,6 +8,9 @@ milestones:
   - id: M2
     title: Utvidelser hvis tiden strekker til
     goal: Navnelikhet/sanksjonstreff kan avklares, og partner-API-kontrakten kan prøves med idempotens og nøytral status.
+  - id: M3
+    title: Etterprøvbarhet og taushet
+    goal: En skjermet undersøkelse kan opprettes uten at noen andre roller kan utlede at den finnes, automatiseringsgraden måles ærlig, og hver beslutning får oppbevaringsfrist og neste kontrolldato.
 ---
 Klikkbar, fungerende prototype av Nordisk AML Automation Platform, bygget på 90 minutter.
 Historien følger spesifikasjonens «Første demonstrasjon» (§16) og designprøven i UX-kapittelet (§06 14/14):

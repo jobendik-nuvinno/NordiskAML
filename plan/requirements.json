@@ -405,12 +405,10 @@
       "gate": "G1",
       "owner": "Hvitvaskingsansvarlig",
       "test_run": "AT-04",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Ubesvart obligatorisk tiltak kan ikke kvitteres ut med en samlet vurderingskommentar."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-028",
@@ -467,12 +465,10 @@
       "gate": "G1",
       "owner": "Ansvarlig datakvalitet",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "En passert dato endrer status til forfalt, ikke fornyet. En e-post alene oppfyller ikke kontrollen."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-032",
@@ -561,12 +557,10 @@
       "gate": "G1",
       "owner": "Produkteier transaksjoner",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Et avbrutt oppdrag kan registreres og undersøkes uten kontonummer eller ferdig KYC-profil."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-038",
@@ -657,12 +651,10 @@
       "gate": "G1",
       "owner": "Rapporteringsansvarlig",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "Én sak kan samle flere signaler uten å slette opphav; avslutning krever selvstendig konklusjon."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-044",
@@ -689,12 +681,10 @@
       "gate": "G1",
       "owner": "Rapporteringsansvarlig",
       "test_run": "AT-07",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "Portal, faktura, standardwebhook, supportsøk og generativ assistent røper verken rapport eller saksstatus."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-046",
@@ -783,12 +773,10 @@
       "gate": "G1",
       "owner": "Personvern- og sikkerhetsansvarlig",
       "test_run": "AT-09",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "To norske testkunder med ordinære og forsterkede tiltak ved avslutning får relevante ulike frister."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-052",
@@ -1255,12 +1243,10 @@
       "gate": "G1",
       "owner": "Design- og produkteier",
       "test_run": "AT-01",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "Utvalget lar seg gjenskape fra logg. Menneskelige sluttgodkjenninger telles aldri som helautomatiske beslutninger."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-082",
@@ -1287,12 +1273,10 @@
       "gate": "G2",
       "owner": "Design- og produkteier",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Kommersiell administrator kan se antall forbrukte kontroller, men ikke kunder, rapportstatus eller treff."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-084",
