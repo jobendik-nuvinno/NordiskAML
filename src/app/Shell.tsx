@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { resetPartnerApi } from '../api/partnerApi'
-import { ACTOR, resetDemo, ROLE_TITLE, setRegistryDown, STAGE_LABEL, STAGES } from '../api/fakeServer'
+import { ACTOR, resetDemo, ROLE_TITLE, setRegistryDown, STAGE_LABEL, STAGES, store } from '../api/fakeServer'
 import { resetRestricted } from '../api/restrictedServer'
 import {
   navigation as designNav, NoticeBar, RenderScreen, screenTitles as designTitles, type Country, type NavGroup, type Notice,
@@ -12,6 +12,7 @@ import type { Case, Role } from '../domain/types'
 import { showToast, useStore, useToast } from './hooks'
 import { CASE_SCREENS, Ctx, type AppCtx, type DesignRole, type ScreenId, type UserFunction } from './context'
 import { LIVE } from './screens'
+import { buildHash, parseHash } from './route'
 import bullLogo from '../assets/bull-logo.png'
 import { Badge, Label, Panel, SmallTitle, statusText, statusTone } from './ui'
 
@@ -59,20 +60,60 @@ const TITLES: Record<ScreenId, { eyebrow: string; title: string; copy: string }>
   portal: { eyebrow: 'SELVBETJENING', title: 'Opplysninger om oppdraget', copy: 'Her ser du hva vi trenger fra deg for å fullføre kontrollen av oppdraget.' },
 }
 
+function readRoute(cases: readonly Case[]) {
+  if (typeof window === 'undefined') return {} as ReturnType<typeof parseHash> & { caseId?: string | null; pendingRef?: string }
+  const r = parseHash(window.location.hash, (screen, role) => NAV[role].some(g => g.items.some(i => i.id === screen)))
+  const c = r.caseRef ? cases.find(x => x.ref === r.caseRef) : undefined
+  return { ...r, caseId: r.caseRef ? c?.id ?? null : r.role ? null : undefined, pendingRef: r.caseRef && !c ? r.caseRef : undefined }
+}
+
+/** Designets titler bruker eksempelsaken AML-0248; vis aktiv sak i stedet, eller ingen. */
+function eyebrow(text: string, ref?: string) {
+  if (ref) return text.replace('SAK AML-0248', ref)
+  return text.replace(/ \/ SAK AML-0248$/, '').replace(/^SAK AML-0248 \/ /, '')
+}
+
 function backendRole(r: DesignRole, fn: UserFunction): Role {
   return r === 'platform' ? 'partner' : r === 'admin' ? 'admin' : r === 'customer' ? 'kunde' : fn
 }
 
 export function AppShell() {
   const state = useStore()
-  const [designRole, setDesignRole] = useState<DesignRole>('user')
-  const [fn, setFn] = useState<UserFunction>('saksbehandler')
-  const [screen, setScreen] = useState<ScreenId>('queue')
-  const [caseId, setCaseId] = useState<string | null>(null)
+  const initial = useMemo(() => readRoute(state.cases), [])
+  const [designRole, setDesignRole] = useState<DesignRole>(initial.role ?? 'user')
+  const [fn, setFn] = useState<UserFunction>(initial.fn ?? 'saksbehandler')
+  const [screen, setScreen] = useState<ScreenId>(initial.screen ?? ROLES[initial.role ?? 'user'].defaultScreen)
+  const [caseId, setCaseId] = useState<string | null>(initial.caseId ?? null)
+  const caseRef = caseId ? state.cases.find(c => c.id === caseId)?.ref ?? null : null
+
+  // URL ↔ tilstand: tilbake-knapp, oppdatering og lenker til en bestemt side og sak.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const hash = buildHash({ role: designRole, fn, screen, caseRef: CASE_SCREENS.includes(screen) ? caseRef : null })
+    if (window.location.hash !== hash) window.history.pushState(null, '', hash)
+  }, [designRole, fn, screen, caseRef])
+  useEffect(() => {
+    const onPop = () => {
+      const r = readRoute(store.state.cases)
+      if (r.role) setDesignRole(r.role)
+      if (r.fn) setFn(r.fn)
+      if (r.screen) setScreen(r.screen)
+      if (r.caseId !== undefined) setCaseId(r.caseId)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+  // En sak i URL-en kan dukke opp først når testdataene er lastet.
+  useEffect(() => {
+    if (caseId || !initial.pendingRef) return
+    const c = state.cases.find(x => x.ref === initial.pendingRef)
+    if (c) setCaseId(c.id)
+  }, [state.cases.length])
   const [country, setCountry] = useState<Country>('NO')
   const [toast, closeToast] = useToast()
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  const go = (s: ScreenId) => { setScreen(s); closeToast() }
+  const go = (s: ScreenId) => { setScreen(s); setMenuOpen(false); closeToast() }
   const ctx: AppCtx = useMemo(() => ({
     role: backendRole(designRole, fn), designRole, fn, caseId,
     openCase: (id, s = 'case') => { setCaseId(id); go(s) },
@@ -94,6 +135,9 @@ export function AppShell() {
       <div className="min-h-screen bg-[#F5F7F9] font-sans text-[#172536]">
         <header className="border-b border-[#DCE4EB] bg-white">
           <div className="mx-auto flex h-14 max-w-[1800px] items-center gap-5 px-5 lg:px-8">
+            <button onClick={() => setMenuOpen(true)} aria-label="Åpne meny" aria-expanded={menuOpen} className="-ml-1 grid h-8 w-8 place-items-center border border-[#DCE4EB] text-[#42536A] lg:hidden">
+              <span aria-hidden="true" className="block h-[10px] w-[14px] border-y-2 border-current before:mt-[2px] before:block before:h-[2px] before:bg-current" />
+            </button>
             <div className="flex items-center border-r border-[#E2E8ED] pr-5">
               <img src={bullLogo} alt="Bull" className="h-7 w-auto" />
             </div>
@@ -107,10 +151,17 @@ export function AppShell() {
             <UserMenu role={designRole} fn={fn} onRole={changeRole} onFn={setFn} registryDown={state.faults.registryDown} reset={reset} />
           </div>
         </header>
-        <div className="mx-auto max-w-[1800px] px-5 pt-5 lg:px-8"><NoticeBar notice={notice} dismiss={closeToast} /></div>
         <div className="mx-auto flex max-w-[1800px]">
-          <aside className="hidden w-[250px] shrink-0 border-r border-[#DCE4EB] bg-white lg:block">
-            <div className="sticky top-0 h-[calc(100vh-57px)] overflow-y-auto px-4 py-5">
+          {menuOpen && <div className="fixed inset-0 z-30 bg-[#172536]/30 lg:hidden" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+          <aside aria-label="Navigasjon" onKeyDown={e => e.key === 'Escape' && setMenuOpen(false)}
+            className={(menuOpen ? 'fixed inset-y-0 left-0 z-40 block shadow-[0_12px_32px_rgba(23,37,54,0.18)]' : 'hidden') + ' w-[270px] shrink-0 border-r border-[#DCE4EB] bg-white lg:static lg:block lg:w-[250px] lg:shadow-none'}>
+            <div className="h-full overflow-y-auto px-4 py-5 lg:sticky lg:top-0 lg:h-[calc(100vh-57px)]">
+              {menuOpen && (
+                <div className="mb-4 flex items-center justify-between lg:hidden">
+                  <img src={bullLogo} alt="Bull" className="h-6 w-auto" />
+                  <button onClick={() => setMenuOpen(false)} className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#56677B] underline underline-offset-4">Lukk</button>
+                </div>
+              )}
               {designRole === 'user' && (
                 <div className="mb-5 border border-[#DCE4EB] p-3">
                   <div className="text-[9px] font-bold tracking-[0.13em] text-[#8592A2]">AKTIV SAK</div>
@@ -143,8 +194,9 @@ export function AppShell() {
             </div>
           </aside>
           <main className="min-w-0 flex-1 px-5 py-7 lg:px-8">
+            {notice && <div className="mb-5"><NoticeBar notice={notice} dismiss={closeToast} /></div>}
             <div className="border-b border-[#DDE5EC] pb-5">
-              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1E776A]">{TITLES[screen].eyebrow}</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1E776A]">{eyebrow(TITLES[screen].eyebrow, CASE_SCREENS.includes(screen) ? current?.ref : undefined)}</div>
               <h1 className="mt-2 text-[27px] font-semibold tracking-[-0.04em] text-[#172536]">{TITLES[screen].title}</h1>
               <p className="mt-1.5 max-w-[760px] text-[13px] leading-6 text-[#617188]">{TITLES[screen].copy}</p>
             </div>

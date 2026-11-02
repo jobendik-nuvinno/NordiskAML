@@ -30,7 +30,7 @@ export function InsightsScreen() {
           <Metric label="Frafall" value={String(m.denominator - m.numerator)} help={`Manuell innhenting, venter eller stoppet · utelatt: ${m.omitted.reduce((n, o) => n + o.count, 0)}`} tone="amber" />
           <Metric label="Beslutninger" value={String(m.humanDecisions)} help={`Menneskelige · automatiske: ${m.automatedDecisions}`} tone="blue" />
         </div>
-        <Callout tone="amber">Målet om ≥ 70 % maskinelt ferdige grunnlag er en pilotambisjon, ikke et målt resultat. Tallene gjelder bare demodataene ({m.totalCases} saker, andel av alle: {pctText(m.shareOfAll)}).</Callout>
+        <Callout tone="amber">Målet om ≥ 70 % maskinelt ferdige grunnlag er en pilotambisjon, ikke et målt resultat. Tallene gjelder bare testdataene ({m.totalCases} saker, andel av alle: {pctText(m.shareOfAll)}).</Callout>
         <Panel>
           <div className="border-b border-[#E2E8ED] px-5 py-4">
             <SmallTitle title="Utvalg per sak" copy="Teller: grunnlag klart for faglig vurdering med bare systemhendelser etter registrering. Nevner: alle påbegynte kontroller, også ventende og stoppede. En menneskelig beslutning gjør aldri saken til en automatisk beslutning." />
