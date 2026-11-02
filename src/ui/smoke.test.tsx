@@ -7,6 +7,8 @@ import { NewCheck } from './NewCheck'
 import { PartnerConsole } from './PartnerConsole'
 import { Portal } from './Portal'
 import { Workqueue } from './Workqueue'
+import { RestrictedRoom } from './Restricted'
+import { reportConcern } from '../api/restrictedServer'
 
 setTiming([0, 0], 0)
 beforeAll(async () => { await resetDemo() })
@@ -29,5 +31,11 @@ describe('røyktest: alle visninger rendrer', () => {
     await submitDocument('kunde', c.id, portalTasks().find(t => t.caseId === c.id)!.requestId, null)
     await decide('godkjenner', c.id, 'etabler_med_tiltak', 'Eierskap dokumentert av kunden.')
     expect(renderToString(<CaseView role="godkjenner" id={c.id} back={() => {}} />)).toContain('Beslutning fattet')
+  })
+
+  it('skjermet arbeidsrom viser undersøkelser bare for ansvarlig', async () => {
+    await reportConcern('saksbehandler', { caseId: null, subjectName: 'Avbrutt oppdrag Eksempel', kind: 'manuell_observasjon', description: 'Kunden trakk seg ved spørsmål om midler' })
+    expect(renderToString(<RestrictedRoom role="hvitvaskingsansvarlig" />)).toContain('Avbrutt oppdrag Eksempel')
+    expect(renderToString(<RestrictedRoom role="saksbehandler" />)).not.toContain('Avbrutt oppdrag Eksempel')
   })
 })

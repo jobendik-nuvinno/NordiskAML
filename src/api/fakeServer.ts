@@ -12,6 +12,7 @@ import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, REGISTRY, SCREENING, SEED_CASES, 
 export const ACTOR: Record<Role, string> = {
   saksbehandler: 'Saksbehandler Demo',
   godkjenner: 'Faglig godkjenner Demo',
+  hvitvaskingsansvarlig: 'Hvitvaskingsansvarlig Demo',
   kunde: 'Kunde (portal)',
   partner: 'Partnerintegrasjon',
 }
@@ -23,9 +24,9 @@ export class ApiError extends Error {
 
 type Perm = 'case.read' | 'case.create' | 'case.update' | 'doc.request' | 'portal.submit' | 'decision.make' | 'hit.resolve'
 const PERMS: Record<Perm, Role[]> = {
-  'case.read': ['saksbehandler', 'godkjenner'],
+  'case.read': ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig'],
   'case.create': ['saksbehandler', 'partner'],
-  'case.update': ['saksbehandler', 'godkjenner'],
+  'case.update': ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig'],
   'doc.request': ['saksbehandler', 'godkjenner'],
   'portal.submit': ['kunde'],
   'decision.make': ['godkjenner'],
@@ -73,6 +74,9 @@ export function setTiming(lat: [number, number], stage: number) { latency = lat;
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
 const now = () => new Date().toISOString()
 const uuid = () => crypto.randomUUID()
+
+/** Simulert nettverksforsinkelse, delt med den skjermede tjenesten. */
+export const networkDelay = () => sleep(latency[0] + Math.random() * (latency[1] - latency[0]))
 
 async function call<T>(role: Role, perm: Perm, fn: () => T | Promise<T>): Promise<T> {
   await sleep(latency[0] + Math.random() * (latency[1] - latency[0]))

@@ -8,6 +8,7 @@ import {
 } from '../domain/rules'
 import type { Case, CheckItem, Decision, DecisionOutcome, OwnershipEdge, Party, Role, ScreeningHit } from '../domain/types'
 import { fmt, useCall, useStore } from './hooks'
+import { ConcernDialog } from './Restricted'
 import { statusBadge } from './Workqueue'
 
 const TABS = ['Oversikt', 'Eierskap', 'Screening', 'Risiko', 'Beslutning', 'Historikk'] as const
@@ -18,6 +19,7 @@ export function CaseView({ role, id, back }: { role: Role; id: string; back: () 
   const c = cases.find(x => x.id === id)
   const [tab, setTab] = useState<Tab>('Oversikt')
   const [snapshot, setSnapshot] = useState<Decision | null>(null)
+  const [concern, setConcern] = useState(false)
   if (!c) return <article><p>Saken finnes ikke lenger.</p><button onClick={back}>Til arbeidskøen</button></article>
 
   return (
@@ -40,6 +42,10 @@ export function CaseView({ role, id, back }: { role: Role; id: string; back: () 
       {tab === 'Beslutning' && <DecisionPanel c={c} role={role} openSnapshot={setSnapshot} />}
       {tab === 'Historikk' && <History c={c} role={role} openSnapshot={setSnapshot} />}
       {snapshot && <SnapshotView d={snapshot} close={() => setSnapshot(null)} />}
+      <p className="mut" style={{ marginTop: 18 }}>
+        <button className="link" onClick={() => setConcern(true)}>Meld intern bekymring</button> – går til skjermet funksjon og vises ikke i saken.
+      </p>
+      {concern && <ConcernDialog role={role} caseId={c.id} subject={c.name} close={() => setConcern(false)} />}
     </>
   )
 }

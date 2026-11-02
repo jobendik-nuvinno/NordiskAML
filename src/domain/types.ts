@@ -1,6 +1,6 @@
 // Logisk kjerne etter kravspesifikasjonen §09/§10. Alle ID-er er ugjennomsiktige; alle data er fiktive.
 
-export type Role = 'saksbehandler' | 'godkjenner' | 'kunde' | 'partner'
+export type Role = 'saksbehandler' | 'godkjenner' | 'hvitvaskingsansvarlig' | 'kunde' | 'partner'
 export type Country = 'NO' | 'SE' | 'DK' | 'FI' | 'IS'
 export type Sector = 'legal' | 'accounting' | 'real_estate' | 'payments'
 export type PartyType = 'person' | 'organisation'
@@ -189,4 +189,33 @@ export interface Case {
   risk: RiskAssessment | null
   decisions: Decision[]
   audit: AuditEvent[]
+}
+
+// ---------- Skjermet sone (INV-01, INV-03) – lagres separat fra saker ----------
+
+export interface Signal {
+  id: string
+  at: string
+  kind: 'internt_tips' | 'manuell_observasjon'
+  description: string
+  amount: string | null
+  by: string
+}
+
+export interface Investigation {
+  id: string
+  ref: string
+  /** Ugjennomsiktig kobling til saken; saken selv vet ingenting om undersøkelsen. */
+  caseId: string | null
+  subjectName: string
+  createdAt: string
+  priority: 'høy' | 'normal'
+  owner: string | null
+  dueAt: string
+  signals: Signal[]
+  finding: string
+  hypothesis: string
+  timeline: { at: string; text: string; by: string }[]
+  status: 'åpen' | 'avsluttet'
+  conclusion: { text: string; reportDecision: 'rapporteres' | 'rapporteres_ikke'; responsible: string; at: string } | null
 }
