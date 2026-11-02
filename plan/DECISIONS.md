@@ -31,3 +31,13 @@ Date: 2026-11-02 · Status: accepted · Slices: S06, S07
 
 Funksjonsfrys ved 1:15. Er M1 ikke verifisert da, droppes S06/S07, og de siste 15 minuttene brukes på
 feilretting og demo-øving. 65 av 84 krav er eksplisitt `deferred` i `requirements.json`.
+
+## D-006 — Libans MagicPath-design er presentasjonskilden
+Date: 2026-11-02 · Status: accepted · Slices: S11
+
+Liban vil ha designet i MagicPath-prosjektet 467704730311876608. Vi bruker «AML Command Center» som
+grunnlag, ordrett: Tailwind v4, tema, skall og alle 28 skjermene. Designets tre roller beholdes. Kunde
+legges til som fjerde rolle, fordi spesifikasjonen krever en adskilt kundeportal. Innen «Bruker» velges en
+funksjon (saksbehandler, godkjenner eller AML-ansvarlig), fordi beslutning og skjermet sone krever ulike
+roller. Skjermer uten logikk (plattformdrift, tenantadministrasjon, transaksjoner G3, FIU-rapportering)
+vises som Libans statiske design, merket «Designskisse». FIU-kvitteringer simuleres fortsatt ikke (D-003).

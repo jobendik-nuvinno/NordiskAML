@@ -7,10 +7,10 @@ export function useStore() {
 }
 
 // Enkel toast-kanal for svar og feil fra den simulerte backenden.
-type Toast = { text: string; kind: 'ok' | 'err' } | null
+type Toast = { text: string; kind: 'ok' | 'err' | 'info' } | null
 let toast: Toast = null
 const toastListeners = new Set<() => void>()
-export function showToast(text: string, kind: 'ok' | 'err' = 'ok') {
+export function showToast(text: string, kind: 'ok' | 'err' | 'info' = 'ok') {
   toast = { text, kind }
   toastListeners.forEach(f => f())
 }
