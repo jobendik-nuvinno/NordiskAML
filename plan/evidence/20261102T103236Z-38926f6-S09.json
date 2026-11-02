@@ -1,0 +1,16 @@
+{
+  "schema": "claudevision.evidence/1",
+  "run_id": "20261102T103236Z-38926f6-S09",
+  "slice": "S09",
+  "requirements": [],
+  "command": "npm run check",
+  "exit_code": 0,
+  "result": "pass",
+  "commit": "38926f603ac076cfcd1e94b86c9afe3399eed102",
+  "branch": "main",
+  "tree_clean": true,
+  "started_at": "2026-11-02T10:32:36Z",
+  "finished_at": "2026-11-02T10:32:37Z",
+  "duration_s": 1,
+  "output_tail": "\n> nordisk-aml-prototype@0.1.0 check\n> tsc -p . && vitest run\n\n\n RUN  v5.0.5 /Users/jobendik/projects/NordiskAML\n\n\n Test Files  6 passed (6)\n      Tests  43 passed (43)\n   Start at  11:32:37\n   Duration  220ms (tests 59%, import 26%, transform 12%, worker 3%)\n"
+}
