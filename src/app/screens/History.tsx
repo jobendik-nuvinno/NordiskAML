@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { registerLaterChange } from '../../api/fakeServer'
-import { OUTCOME_LABEL, reviewState } from '../../domain/rules'
+import { activeDecision, OUTCOME_LABEL, reviewState } from '../../domain/rules'
 import type { Decision } from '../../domain/types'
 import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
@@ -12,7 +12,7 @@ export function HistoryScreen() {
   const c = useStore().cases.find(x => x.id === caseId)!
   const { busy, run } = useCall()
   const [locked, setLocked] = useState<Decision | null>(null)
-  const d = c.decisions[0]
+  const d = activeDecision(c)
   const review = d ? reviewState(d.nextReviewAt) : 'ingen'
   const events = [...c.audit].reverse()
 
@@ -26,7 +26,7 @@ export function HistoryScreen() {
           const dec = e.decisionId ? c.decisions.find(x => x.id === e.decisionId) : undefined
           return [
             fmt(e.at),
-            <div>{e.action}{dec ? <div className="mt-1"><button type="button" className={btn.link} onClick={() => setLocked(dec)}>Åpne eksakt beslutningsgrunnlag</button></div> : null}</div>,
+            <div>{e.action}{dec ? <div className="mt-1"><Badge tone={dec.supersededAt ? 'neutral' : 'green'}>{`Versjon ${dec.version} · ${dec.supersededAt ? 'overprøvd' : 'gjeldende'}`}</Badge> <button type="button" className={btn.link} onClick={() => setLocked(dec)}>{`Åpne eksakt beslutningsgrunnlag (versjon ${dec.version})`}</button></div> : null}</div>,
             e.detail || '–',
             <Badge tone={e.actor === 'System' ? 'neutral' : 'blue'}>{e.actor}</Badge>,
             <span className={mono}>{e.correlationId.slice(0, 8)}</span>,
@@ -48,7 +48,8 @@ export function HistoryScreen() {
                   ? <span className="flex flex-wrap items-center gap-2">{fmt(d.nextReviewAt)} <Badge tone={review === 'forfalt' ? 'red' : 'blue'}>{review === 'forfalt' ? 'Forfalt' : 'Planlagt'}</Badge></span>
                   : 'Ingen – kundeforhold ikke etablert'],
               ]} />
-            ) : <Callout tone="blue">Ingen beslutning ennå. Oppbevaringsfrist og neste kontroll fastsettes når saken besluttes.</Callout>}
+            ) : c.decisions.length ? <Callout tone="amber">Beslutningen er overprøvd. Oppbevaringsfrist og neste kontroll fastsettes av den nye beslutningen.</Callout>
+            : <Callout tone="blue">Ingen beslutning ennå. Oppbevaringsfrist og neste kontroll fastsettes når saken besluttes.</Callout>}
           </div>
           {d ? (
             <>
@@ -72,7 +73,7 @@ function LockedBasis({ decision: d, close }: { decision: Decision; close: () => 
       <Panel className="w-full max-w-[760px] p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <Label>Låst beslutningsgrunnlag · skrivebeskyttet</Label>
+            <Label>{`Låst beslutningsgrunnlag · versjon ${d.version} · skrivebeskyttet`}</Label>
             <div className="mt-1 text-[15px] font-semibold text-[#172536]">{s.caseRef} · {OUTCOME_LABEL[d.outcome]}</div>
           </div>
           <button type="button" className={btn.secondary} onClick={close} autoFocus>Lukk</button>
@@ -84,6 +85,7 @@ function LockedBasis({ decision: d, close }: { decision: Decision; close: () => 
             ['Besluttet av', d.actor],
             ['Anbefaling', OUTCOME_LABEL[s.recommendation] + (d.deviates ? ' (avvik)' : '')],
             ['Begrunnelse', d.reason],
+            ...(d.supersededAt ? [['Overprøvd', `${d.supersededBy ?? ''} ${fmt(d.supersededAt)} · ${d.supersededReason ?? ''}`] as [string, string]] : []),
             ['Registerroller', s.registry ? s.registry.roles.map(r => `${r.role}: ${r.name}`).join(' · ') + ` (hentet ${fmt(s.registry.fetchedAt)})` : '–'],
           ]} />
         </div>

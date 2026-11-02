@@ -157,6 +157,12 @@ export interface Decision {
   measures: { measure: string; answer: string }[]
   retention: Retention
   nextReviewAt: string | null
+  /** Beslutningsversjon i saken (1, 2, …). Eldre versjoner beholdes uendret (RSK-06). */
+  version: number
+  /** Satt når beslutningen er overprøvd. Grunnlag og hash endres aldri. */
+  supersededAt?: string
+  supersededReason?: string
+  supersededBy?: string
 }
 
 export interface Retention {

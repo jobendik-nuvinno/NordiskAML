@@ -2,7 +2,7 @@
 // revisjonslogg med korrelasjons-ID, feilbrytere og lagring i localStorage.
 
 import {
-  analyseOwnership, assessRisk, nextReview, retentionFor, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, sha256,
+  activeDecision, analyseOwnership, assessRisk, nextReview, retentionFor, beneficialOwners, evaluateBlockers, OUTCOME_LABEL, pct, recommend, sha256,
 } from '../domain/rules'
 import type {
   AuditEvent, Case, CaseStatus, CheckItem, Country, DecisionOutcome, DecisionSnapshot, Role, Sector, Stage,
@@ -33,7 +33,7 @@ export class ApiError extends Error {
   constructor(public status: number, public title: string) { super(title) }
 }
 
-type Perm = 'case.read' | 'case.create' | 'case.update' | 'doc.request' | 'portal.submit' | 'decision.make' | 'hit.resolve'
+type Perm = 'case.read' | 'case.create' | 'case.update' | 'doc.request' | 'portal.submit' | 'decision.make' | 'decision.reopen' | 'hit.resolve'
 const PERMS: Record<Perm, Role[]> = {
   'case.read': ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig'],
   'case.create': ['saksbehandler', 'partner'],
@@ -41,6 +41,7 @@ const PERMS: Record<Perm, Role[]> = {
   'doc.request': ['saksbehandler', 'godkjenner'],
   'portal.submit': ['kunde'],
   'decision.make': ['godkjenner'],
+  'decision.reopen': ['godkjenner', 'hvitvaskingsansvarlig'],
   'hit.resolve': ['saksbehandler', 'godkjenner'],
 }
 
@@ -212,7 +213,7 @@ function prepare(c: Case) {
 }
 
 function settledStatus(c: Case): CaseStatus {
-  if (c.decisions.length) return 'decided'
+  if (activeDecision(c)) return 'decided'
   if (c.checks.some(k => k.state === 'waiting')) return 'waiting_source'
   if (c.docRequests.some(r => r.status === 'open')) return 'customer_action'
   return evaluateBlockers(c).length || c.scope.covered !== 'ja' ? 'needs_review' : 'review_ready'
@@ -411,7 +412,7 @@ export function decide(role: Role, caseId: string, outcome: DecisionOutcome, rea
     const c = getCase(caseId)
     const blockers = evaluateBlockers(c)
     if (blockers.length) throw new ApiError(409, `Åpne sperrer må lukkes før beslutning: ${blockers.map(b => b.label).join(', ')}.`)
-    if (c.decisions.length) throw new ApiError(409, 'Saken er allerede besluttet. Overprøving krever nytt grunnlag.')
+    if (activeDecision(c)) throw new ApiError(409, 'Saken er allerede besluttet. Overprøving krever nytt grunnlag.')
     if (reason.trim().length < 10) throw new ApiError(422, 'Begrunnelse er påkrevd (minst 10 tegn).')
     const establishing = outcome === 'etabler' || outcome === 'etabler_med_tiltak'
     const required = establishing ? (c.risk?.mandatoryMeasures ?? []) : []
@@ -430,10 +431,29 @@ export function decide(role: Role, caseId: string, outcome: DecisionOutcome, rea
       measures: required.map(m => ({ measure: m, answer: answers[m].trim() })),
       retention: retentionFor(c.scope.country, outcome, snapshot.capturedAt),
       nextReviewAt: nextReview(outcome, c.risk, snapshot.capturedAt),
+      version: c.decisions.length + 1,
     })
-    c.evidence.push({ id: uuid(), kind: 'beslutningsgrunnlag', title: `Beslutningsgrunnlag ${c.ref}`, sha256: hash, collectedAt: snapshot.capturedAt, source: 'Plattform', version: 1 })
+    c.evidence.push({ id: uuid(), kind: 'beslutningsgrunnlag', title: `Beslutningsgrunnlag ${c.ref}`, sha256: hash, collectedAt: snapshot.capturedAt, source: 'Plattform', version: c.decisions.length })
     c.status = 'decided'
-    audit(c, ACTOR[role], `Beslutning fattet: ${OUTCOME_LABEL[outcome]}`, outcome !== recommendation ? `Avviker fra anbefaling (${OUTCOME_LABEL[recommendation]})` : 'I tråd med anbefaling', id)
+    audit(c, ACTOR[role], `Beslutning fattet (versjon ${c.decisions.length}): ${OUTCOME_LABEL[outcome]}`, outcome !== recommendation ? `Avviker fra anbefaling (${OUTCOME_LABEL[recommendation]})` : 'I tråd med anbefaling', id)
+  })
+}
+
+/**
+ * Overprøving og retting (RSK-04, RSK-06): den aktive beslutningen markeres som overprøvd,
+ * men grunnlag og hash røres ikke. Saken får nytt beslutningsgrunnlag og må besluttes på nytt.
+ */
+export function reopenDecision(role: Role, caseId: string, reason: string) {
+  return call(role, 'decision.reopen', () => {
+    const c = getCase(caseId)
+    const d = activeDecision(c)
+    if (!d) throw new ApiError(409, 'Saken har ingen aktiv beslutning å overprøve.')
+    if (reason.trim().length < 10) throw new ApiError(422, 'Overprøving krever begrunnelse (minst 10 tegn).')
+    d.supersededAt = now()
+    d.supersededReason = reason.trim()
+    d.supersededBy = ACTOR[role]
+    audit(c, ACTOR[role], `Beslutning overprøvd (versjon ${d.version})`, reason.trim(), d.id)
+    prepare(c)
   })
 }
 
