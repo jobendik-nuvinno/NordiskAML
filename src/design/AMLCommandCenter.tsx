@@ -393,7 +393,7 @@ export function Table({
   headers: string[];
   rows: any[][];
 }) {
-  return <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left"><thead className="bg-[#F8FAFB] text-[10px] font-bold uppercase tracking-[0.1em] text-[#758397]"><tr>{headers.map(header => <th key={header} className="px-5 py-3">{header}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={index} className="border-t border-[#E7EDF1] text-[12px] text-[#4E6075] transition-colors hover:bg-[#F7FAFA]">{row.map((cell, cellIndex) => <td key={cellIndex} className={'px-5 py-3.5 ' + (cellIndex === 0 ? 'font-semibold text-[#27384B]' : '')}>{cell}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left"><thead className="bg-[#F8FAFB] text-[10px] font-bold uppercase tracking-[0.1em] text-[#758397]"><tr>{headers.map(header => <th key={header} className="px-5 py-3">{header}</th>)}</tr></thead><tbody>{rows.length === 0 ? <tr className="border-t border-[#E7EDF1]"><td colSpan={headers.length} className="px-5 py-4 text-[12px] text-[#8692A1]">Ingen oppføringer ennå.</td></tr> : null}{rows.map((row, index) => <tr key={index} className="border-t border-[#E7EDF1] text-[12px] text-[#4E6075] transition-colors hover:bg-[#F7FAFA]">{row.map((cell, cellIndex) => <td key={cellIndex} className={'px-5 py-3.5 ' + (cellIndex === 0 ? 'font-semibold text-[#27384B]' : '')}>{cell}</td>)}</tr>)}</tbody></table></div>;
 }
 export function TestPanel({
   title = 'Kontrollregler',

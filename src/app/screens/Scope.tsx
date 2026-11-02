@@ -1,9 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ACTOR, createCheck } from '../../api/fakeServer'
 import { ENABLED_COUNTRIES, SERVICES } from '../../api/seed'
 import { POLICY, SECTOR_LABEL, serviceLabel } from '../../domain/rules'
 import type { Country, Sector } from '../../domain/types'
-import { useCall } from '../hooks'
+import { showToast, useCall } from '../hooks'
 import { useApp } from '../context'
 import { Callout, Label, Panel, SmallTitle, TestPanel, btn, field } from '../ui'
 
@@ -32,10 +32,16 @@ export function ScopeScreen() {
   const orgOk = /^\d{8,10}$/.test(digits)
   const covered = countryOk && sectorOk
 
+  const mounted = useRef(true)
+  useEffect(() => () => { mounted.current = false }, [])
+
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    const c = await run(() => createCheck(role, { orgNr, country, sector, service }), 'Kontroll startet: omfang, land og ansvarlig er lagret.')
-    if (c) openCase(c.id)
+    const c = await run(() => createCheck(role, { orgNr, country, sector, service }))
+    if (c && mounted.current) {
+      openCase(c.id)
+      showToast(`Kontroll startet for org.nr ${c.orgNr}: omfang, land og ansvarlig er lagret.`)
+    }
   }
   const box = 'border border-[#DCE4EB] bg-[#FBFCFD] p-3'
   const select = field + ' mt-1 border-[#DCE4EB] bg-white font-semibold text-[#314357]'

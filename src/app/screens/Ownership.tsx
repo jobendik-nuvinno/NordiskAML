@@ -30,7 +30,7 @@ function OwnerNodes({ id, parties, edges, chain, onRequest, requested }: {
                 {leafOrg && <Badge tone="amber">Uavklart</Badge>}
               </div>
               <small className="mt-1 block text-[10px] text-[#718096]">
-                {p?.type === 'person' ? `Person, f. ${p.idRef}` : `${p?.idRef ?? ''} · ${p?.country ?? ''}`} · Kilde: {e.source} · fra {e.validFrom}
+                {p?.type === 'person' ? `Person, ${p.idRef}` : `${p?.idRef ?? ''} · ${p?.country ?? ''}`} · Kilde: {e.source} · fra {e.validFrom}
               </small>
               {leafOrg && (
                 <div className="mt-2 text-[10px] text-[#82510E]">

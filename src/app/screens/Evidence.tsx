@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { activeDecision } from '../../domain/rules'
 import { requestDocument } from '../../api/fakeServer'
 import type { Evidence } from '../../domain/types'
 import { fmt, useCall, useStore } from '../hooks'
@@ -16,7 +17,9 @@ export function EvidenceScreen() {
   const { role, caseId } = useApp()
   const c = useStore().cases.find(x => x.id === caseId)!
   const { busy, run } = useCall()
-  const [partyId, setPartyId] = useState(c.parties[0]?.id ?? '')
+  const [picked, setPartyId] = useState('')
+  const partyId = picked || c.parties[0]?.id || ''
+  const decided = !!activeDecision(c)
   const open = c.docRequests.filter(r => r.status === 'open')
   const partyName = (id: string) => c.parties.find(p => p.id === id)?.name ?? id
 
@@ -62,13 +65,13 @@ export function EvidenceScreen() {
               ? <Callout tone="green">Ingen åpne dokumentforespørsler.</Callout>
               : open.map(r => <Callout key={r.id} tone="amber"><b>{r.title}</b><br />Etterspurt {fmt(r.createdAt)}. Kunden har ikke levert, og forespørselen kan ikke lukke sperren før dokumentet er mottatt.</Callout>)}
           </div>
-          <form className="mt-4" onSubmit={e => { e.preventDefault(); run(() => requestDocument(role, c.id, partyId), 'Kundeforespørsel opprettet med nøytral portaltekst') }}>
+          {decided ? <div className="mt-4"><Callout tone="blue">Saken er besluttet. Nye opplysninger etterspørres etter overprøving av beslutningen.</Callout></div> : <form className="mt-4" onSubmit={e => { e.preventDefault(); run(() => requestDocument(role, c.id, partyId), 'Kundeforespørsel opprettet med nøytral portaltekst') }}>
             <label htmlFor="ev-party" className={fieldLabel}>Be om eierdokumentasjon for</label>
             <select id="ev-party" className={field} value={partyId} onChange={e => setPartyId(e.target.value)}>
               {c.parties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
             <button type="submit" disabled={busy || !partyId} className={'mt-3 w-full ' + btn.primary}>Be om dokument</button>
-          </form>
+          </form>}
         </Panel>
         <Panel className="p-5">
           <SmallTitle title="Låst grunnlag (PRV-02)" copy="Ved beslutning fanges et øyeblikksbilde av hele grunnlaget og legges i manifestet som eget bevis med SHA-256." />

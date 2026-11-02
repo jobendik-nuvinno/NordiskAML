@@ -48,6 +48,7 @@ function TaskCard({ t }: { t: PortalTask }) {
 
   const send = () => run(async () => {
     const bytes = file ? await file.arrayBuffer() : null
+    if (draft !== t.draft) await saveDraft('kunde', t.caseId, t.requestId, draft)
     await submitDocument('kunde', t.caseId, t.requestId, file && bytes ? { name: file.name, bytes } : null)
   }, 'Dokumentet er sendt')
 

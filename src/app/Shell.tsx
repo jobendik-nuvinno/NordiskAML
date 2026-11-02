@@ -69,7 +69,7 @@ function readRoute(cases: readonly Case[]) {
   if (typeof window === 'undefined') return {} as ReturnType<typeof parseHash> & { caseId?: string | null; pendingRef?: string }
   const r = parseHash(window.location.hash, (screen, role) => NAV[role].some(g => g.items.some(i => i.id === screen)))
   const c = r.caseRef ? cases.find(x => x.ref === r.caseRef) : undefined
-  return { ...r, caseId: r.caseRef ? c?.id ?? null : r.role ? null : undefined, pendingRef: r.caseRef && !c ? r.caseRef : undefined }
+  return { ...r, caseId: r.caseRef ? c?.id ?? null : undefined, pendingRef: r.caseRef && !c ? r.caseRef : undefined }
 }
 
 /** Designets titler bruker eksempelsaken AML-0248; vis aktiv sak i stedet, eller ingen. */
@@ -91,11 +91,16 @@ export function AppShell() {
   const [caseId, setCaseId] = useState<string | null>(initial.caseId ?? null)
   const caseRef = caseId ? state.cases.find(c => c.id === caseId)?.ref ?? null : null
 
+  const firstSync = useRef(true)
   // URL ↔ tilstand: tilbake-knapp, oppdatering og lenker til en bestemt side og sak.
   useEffect(() => {
     if (typeof window === 'undefined') return
     const hash = buildHash({ role: designRole, fn, screen, caseRef: CASE_SCREENS.includes(screen) ? caseRef : null })
-    if (window.location.hash !== hash) window.history.pushState(null, '', hash)
+    if (window.location.hash !== hash) {
+      if (firstSync.current) window.history.replaceState(null, '', hash)
+      else window.history.pushState(null, '', hash)
+    }
+    firstSync.current = false
   }, [designRole, fn, screen, caseRef])
   useEffect(() => {
     const onPop = () => {
@@ -155,7 +160,7 @@ export function AppShell() {
             </nav>
             {designRole === 'user' ? <CaseSearch cases={state.cases} open={id => ctx.openCase(id)} /> : <div className="ml-auto" />}
             {state.faults.registryDown && <Badge tone="red">Registerkilde utilgjengelig</Badge>}
-            <UserMenu role={designRole} fn={fn} onRole={changeRole} onFn={setFn} platformPerson={platformPerson} onPlatformPerson={setPlatformPerson} registryDown={state.faults.registryDown} reset={reset} />
+            <UserMenu role={designRole} fn={fn} onRole={changeRole} onFn={f => { setFn(f); closeToast() }} platformPerson={platformPerson} onPlatformPerson={setPlatformPerson} registryDown={state.faults.registryDown} reset={reset} />
           </div>
         </header>
         <div className="mx-auto flex max-w-[1800px]">

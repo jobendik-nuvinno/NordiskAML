@@ -57,9 +57,9 @@ function HitPanel({ c, h, role }: { c: Case; h: ScreeningHit; role: Role }) {
             </div>
             <div className="flex flex-wrap gap-3 md:col-span-2">
               <button type="button" disabled={busy} className={btn.secondary}
-                onClick={() => run(() => resolveHit(role, c.id, h.id, 'false_positive', reason, validUntil), 'Treffet er avklart som falskt')}>Avklar som falskt treff</button>
+                onClick={() => run(async () => { await resolveHit(role, c.id, h.id, 'false_positive', reason, validUntil); setReason('') }, 'Treffet er avklart som falskt')}>Avklar som falskt treff</button>
               <button type="button" disabled={busy} className={btn.primary}
-                onClick={() => run(() => resolveHit(role, c.id, h.id, 'confirmed', reason, ''), 'Treffet er bekreftet')}>Bekreft treff</button>
+                onClick={() => run(async () => { await resolveHit(role, c.id, h.id, 'confirmed', reason, ''); setReason('') }, 'Treffet er bekreftet')}>Bekreft treff</button>
             </div>
           </div>
         )}

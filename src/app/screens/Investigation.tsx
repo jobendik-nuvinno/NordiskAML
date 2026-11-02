@@ -145,7 +145,7 @@ function Detail({ inv, role, back }: { inv: Investigation; role: Role; back: () 
           <div><label htmlFor="i-note" className={fieldLabel}>Notat til tidslinjen (valgfritt)</label>
             <input id="i-note" className={field} value={note} disabled={closed} onChange={e => setNote(e.target.value)} /></div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" className={btn.primary} disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { finding, hypothesis, priority }, note), 'Undersøkelsen er oppdatert').then(() => setNote(''))}>Lagre</button>
+            <button type="button" className={btn.primary} disabled={busy || closed} onClick={() => run(async () => { await updateInvestigation(role, inv.id, { finding, hypothesis, priority }, note); setNote('') }, 'Undersøkelsen er oppdatert')}>Lagre</button>
             {!inv.owner && <button type="button" className={btn.secondary} disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { owner: 'Marius A. Viken' }), 'Du er eier')}>Ta eierskap</button>}
           </div>
           <div className="pt-2"><SmallTitle title="Avslutning" /></div>

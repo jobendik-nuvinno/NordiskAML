@@ -326,7 +326,8 @@ export function requestDocument(role: Role, caseId: string, partyId: string) {
     const c = getCase(caseId)
     const party = c.parties.find(p => p.id === partyId)
     if (!party) throw new ApiError(404, 'Ressurs ikke tilgjengelig')
-    if (c.docRequests.some(r => r.partyId === partyId && r.status === 'open')) return
+    if (activeDecision(c)) throw new ApiError(409, 'Saken er besluttet. Overprøv beslutningen før nye opplysninger etterspørres.')
+    if (c.docRequests.some(r => r.partyId === partyId && r.status === 'open')) throw new ApiError(409, `Det finnes allerede en åpen forespørsel om ${party.name}.`)
     c.docRequests.push({
       id: uuid(), partyId, status: 'open', draft: '', createdAt: now(), deliveredAt: null, evidenceId: null,
       title: `Eierdokumentasjon for ${party.name}`,
@@ -417,6 +418,7 @@ export function decide(role: Role, caseId: string, outcome: DecisionOutcome, rea
     const blockers = evaluateBlockers(c)
     if (blockers.length) throw new ApiError(409, `Åpne sperrer må lukkes før beslutning: ${blockers.map(b => b.label).join(', ')}.`)
     if (activeDecision(c)) throw new ApiError(409, 'Saken er allerede besluttet. Overprøving krever nytt grunnlag.')
+    if (c.status !== 'review_ready') throw new ApiError(409, 'Beslutningsgrunnlaget er ikke klart. Saken må være «Klar for faglig vurdering».')
     if (reason.trim().length < 10) throw new ApiError(422, 'Begrunnelse er påkrevd (minst 10 tegn).')
     const establishing = outcome === 'etabler' || outcome === 'etabler_med_tiltak'
     const required = establishing ? (c.risk?.mandatoryMeasures ?? []) : []

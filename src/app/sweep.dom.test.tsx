@@ -184,5 +184,6 @@ describe('gjennomkjøring av alle skjermer', () => {
     await waitFor(() => fjord().status !== 'decided', 'saken åpnes for ny beslutning')
     assertPageOk('Etter overprøving')
     expect(host.textContent).toContain('Tidligere beslutning (versjon 1)')
+    expect((host.querySelector('#decision-reason') as HTMLTextAreaElement).value, 'skjemaet er tømt etter overprøving').toBe('')
   })
 })

@@ -33,7 +33,11 @@ export function LandPacksScreen() {
   const audit = readAudit(pack)
   const measures = [...MANDATORY_MEASURES, ...(current?.optionalMeasures ?? [])]
 
+  const [proposing, setProposing] = useState(false)
+
   async function propose() {
+    if (proposing) return
+    setProposing(true)
     setRejection('')
     try {
       await proposeVersion(actor, pack, { ...form, version: form.version || suggestVersion(pack), removeMeasures: remove })
@@ -44,6 +48,8 @@ export function LandPacksScreen() {
       const text = e instanceof ApiError ? `${e.status} · ${e.title}` : String(e)
       setRejection(text)
       showToast(text, 'err')
+    } finally {
+      setProposing(false)
     }
   }
 
@@ -158,7 +164,7 @@ export function LandPacksScreen() {
               </div>
             </div>
             {rejection ? <Callout tone="red">Avvist: {rejection}</Callout> : null}
-            <button disabled={busy} className={btn.primary}>Foreslå versjon</button>
+            <button disabled={busy || proposing} className={btn.primary}>{proposing ? 'Foreslår …' : 'Foreslå versjon'}</button>
           </form>
         </Panel>
       </div>

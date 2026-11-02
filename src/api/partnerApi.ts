@@ -44,6 +44,24 @@ interface PartnerCheck { id: string; externalReference: string; lastStatus: Publ
 const checks = new Map<string, PartnerCheck>()
 const idempotency = new Map<string, { bodyKey: string; response: Promise<ApiResponse> }>()
 
+// Partnerens kontroller og vellykkede idempotenssvar lagres som sakene, så en omlasting midt i demoen
+// verken gir 404 på egne kontroller eller duplikat ved samme Idempotency-Key.
+const STORE_KEY = 'nordisk-aml-partner-v1'
+const storage: Storage | null = (() => { try { return globalThis.localStorage ?? null } catch { return null } })()
+const settled = new Map<string, { bodyKey: string; response: ApiResponse }>()
+function persist() {
+  try { storage?.setItem(STORE_KEY, JSON.stringify({ checks: [...checks.values()], idem: [...settled.entries()] })) } catch { /* privat modus */ }
+}
+;(() => {
+  try {
+    const raw = storage?.getItem(STORE_KEY)
+    if (!raw) return
+    const saved = JSON.parse(raw) as { checks: PartnerCheck[]; idem: [string, { bodyKey: string; response: ApiResponse }][] }
+    for (const pc of saved.checks) checks.set(pc.id, pc)
+    for (const [k, v] of saved.idem) { settled.set(k, v); idempotency.set(k, { bodyKey: v.bodyKey, response: Promise.resolve(v.response) }) }
+  } catch { /* ignorer skadet lagring */ }
+})()
+
 function canonical(v: unknown): string {
   if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`
   if (v && typeof v === 'object')
@@ -89,7 +107,10 @@ export function postCheck(idempotencyKey: string, body: unknown): Promise<ApiRes
   const response = execute(body)
   idempotency.set(idempotencyKey, { bodyKey, response })
   // Feil lagres ikke: en rettet request kan sendes på nytt med samme nøkkel.
-  response.then(r => { if (r.status >= 400) idempotency.delete(idempotencyKey) })
+  response.then(r => {
+    if (r.status >= 400) idempotency.delete(idempotencyKey)
+    else { settled.set(idempotencyKey, { bodyKey, response: r }); persist() }
+  })
   return response
 }
 
@@ -104,6 +125,7 @@ async function execute(body: unknown): Promise<ApiResponse> {
     })
     const pc: PartnerCheck = { id: c.id, externalReference: b.externalReference, lastStatus: 'received', revision: 0, updatedAt: c.createdAt }
     checks.set(c.id, pc)
+    persist()
     ensureWebhooks()
     observe()
     return { status: 202, headers: { 'Content-Type': 'application/json', Location: `/v1/checks/${c.id}` }, body: toCheck(pc) }
@@ -160,6 +182,7 @@ function observe() {
     pc.lastStatus = status
     pc.revision++
     pc.updatedAt = new Date().toISOString()
+    persist()
     const event: PublicEvent = {
       eventId: crypto.randomUUID(), type: 'check.status_updated', occurredAt: pc.updatedAt,
       checkId: pc.id, status, revision: pc.revision,
@@ -212,8 +235,12 @@ export const receiver = {
 
 /** Kun for tester og «tilbakestill demo»: tøm partnerens tilstand. */
 export function resetPartnerApi() {
-  checks.clear(); idempotency.clear(); log.length = 0; seen.clear()
+  checks.clear(); idempotency.clear(); settled.clear(); log.length = 0; seen.clear()
+  try { storage?.removeItem(STORE_KEY) } catch { /* privat modus */ }
   unsubscribe?.(); unsubscribe = null
   chain = Promise.resolve()
   logListeners.forEach(fn => fn())
 }
+
+// Etter omlasting: følg statusendringer for kontroller som ble opprettet før omlastingen.
+if (checks.size) ensureWebhooks()

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ACTOR, decide, reopenDecision } from '../../api/fakeServer'
-import { activeDecision, evaluateBlockers, OUTCOME_LABEL, recommend, reviewState } from '../../domain/rules'
+import { activeDecision, evaluateBlockers, OUTCOME_LABEL, recommend, reviewState, STATUS_LABEL } from '../../domain/rules'
 import type { Decision, DecisionOutcome } from '../../domain/types'
 import { fmt, useCall, useStore } from '../hooks'
 import { useApp } from '../context'
@@ -90,18 +90,24 @@ export function DecisionScreen() {
   const c = useStore().cases.find(x => x.id === caseId)!
   const blockers = evaluateBlockers(c)
   const rec = recommend(c.risk, blockers)
-  const [outcome, setOutcome] = useState<DecisionOutcome>(rec)
+  const [outcome, setOutcomeState] = useState<DecisionOutcome>(rec)
+  const [touched, setTouched] = useState(false)
+  const setOutcome = (o: DecisionOutcome) => { setOutcomeState(o); setTouched(true) }
   const [reason, setReason] = useState('')
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [snapshot, setSnapshot] = useState<Decision | null>(null)
   const { busy, run } = useCall()
   const [reopenReason, setReopenReason] = useState('')
   const d = activeDecision(c)
+  const ready = c.status === 'review_ready'
+  // Følg anbefalingen til brukeren selv velger utfall; tøm skjemaet når en beslutning fattes eller overprøves.
+  useEffect(() => { if (!touched) setOutcomeState(rec) }, [rec, touched])
+  useEffect(() => { setReason(''); setAnswers({}); setReopenReason(''); setTouched(false); setOutcomeState(rec) }, [d?.id, c.decisions.length])
   const earlier = c.decisions.filter(x => x !== d).reverse()
   const previous = c.decisions[c.decisions.length - 1]
   const canReopen = role === 'godkjenner' || role === 'hvitvaskingsansvarlig'
   const measures = outcome === 'etabler' || outcome === 'etabler_med_tiltak' ? (c.risk?.mandatoryMeasures ?? []) : []
-  const status = d ? 'Fattet' : blockers.length ? 'Sperret' : 'Klar for beslutning'
+  const status = d ? 'Fattet' : blockers.length ? 'Sperret' : ready ? 'Klar for beslutning' : 'Grunnlaget er ikke klart'
   const approver = c.risk?.band === 'høy' ? 'Godkjenner · høy risiko' : c.risk?.band === 'middels' ? 'Godkjenner · forhøyet risiko' : 'Faglig godkjenner'
 
   return (
@@ -190,7 +196,8 @@ export function DecisionScreen() {
                 </fieldset>
               )}
               {outcome !== rec && <Callout tone="blue">Du avviker fra anbefalingen ({OUTCOME_LABEL[rec]}). Begrunn avviket – det loggføres.</Callout>}
-              <button type="button" className={btn.primary} disabled={busy || blockers.length > 0}
+              {!ready && blockers.length === 0 && <Callout tone="amber">Beslutningsgrunnlaget er ikke klart ({STATUS_LABEL[c.status].toLowerCase()}). Beslutning kan fattes når saken er «Klar for faglig vurdering».</Callout>}
+              <button type="button" className={btn.primary} disabled={busy || blockers.length > 0 || !ready}
                 onClick={() => run(() => decide(role, c.id, outcome, reason, answers), 'Beslutning registrert og grunnlaget låst')}>
                 Fatt beslutning
               </button>
