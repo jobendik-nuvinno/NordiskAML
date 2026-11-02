@@ -12,6 +12,7 @@ import type { Case, Role } from '../domain/types'
 import { showToast, useStore, useToast } from './hooks'
 import { CASE_SCREENS, Ctx, type AppCtx, type DesignRole, type ScreenId, type UserFunction } from './context'
 import { LIVE } from './screens'
+import bullLogo from '../assets/bull-logo.png'
 import { Badge, Label, Panel, SmallTitle, statusText, statusTone } from './ui'
 
 const ROLES: Record<DesignRole, { label: string; description: string; defaultScreen: ScreenId }> = {
@@ -93,9 +94,8 @@ export function AppShell() {
       <div className="min-h-screen bg-[#F5F7F9] font-sans text-[#172536]">
         <header className="border-b border-[#DCE4EB] bg-white">
           <div className="mx-auto flex h-14 max-w-[1800px] items-center gap-5 px-5 lg:px-8">
-            <div className="flex items-center gap-2.5 border-r border-[#E2E8ED] pr-5">
-              <span className="grid h-7 w-7 place-items-center bg-[#173B5B] text-[12px] font-bold text-white" aria-hidden="true">N</span>
-              <span><b className="block text-[12px] tracking-[0.14em] text-[#172536]">NORDISK</b><small className="block text-[8px] font-bold tracking-[0.16em] text-[#708096]">COMPLIANCE</small></span>
+            <div className="flex items-center border-r border-[#E2E8ED] pr-5">
+              <img src={bullLogo} alt="Bull" className="h-7 w-auto" />
             </div>
             <nav aria-label="Hovedområder" className="hidden items-center gap-5 text-[12px] font-medium text-[#5D6D80] xl:flex">
               {TOP_NAV[designRole].filter(([, s]) => s !== 'scope' || fn === 'saksbehandler').map(([label, s]) => (
