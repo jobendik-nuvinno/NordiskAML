@@ -18,7 +18,20 @@ describe('seed', () => {
       ['Sund Eksempel AB', 'review_ready'],
       ['Havbris Eksempel AS', 'needs_review'],
       ['Org.nr 10000101', 'waiting_source'],
+      ['Lyngheia Eksempel AS', 'decided'],
+      ['Bryggen Eksempel AS', 'decided'],
+      ['Norrsken Exempel AB', 'customer_action'],
     ])
+  })
+
+  it('historiske saker har konsistente tidspunkter og forfalt/planlagt kontroll', async () => {
+    const { reviewState } = await import('../domain/rules')
+    const lyng = store.state.cases.find(c => c.name === 'Lyngheia Eksempel AS')!
+    const bryg = store.state.cases.find(c => c.name === 'Bryggen Eksempel AS')!
+    expect(lyng.createdAt < '2025-01-01').toBe(true)
+    expect(lyng.decisions[0].snapshot.capturedAt).toBe(lyng.decisions[0].at)
+    expect(reviewState(lyng.decisions[0].nextReviewAt)).toBe('forfalt')
+    expect(reviewState(bryg.decisions[0].nextReviewAt)).toBe('planlagt')
   })
 })
 

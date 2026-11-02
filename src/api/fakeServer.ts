@@ -7,7 +7,7 @@ import {
 import type {
   AuditEvent, Case, CaseStatus, CheckItem, Country, DecisionOutcome, DecisionSnapshot, Role, Sector, Stage,
 } from '../domain/types'
-import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, REGISTRY, SCREENING, SEED_CASES, SERVICES } from './seed'
+import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, HISTORY_CASES, REGISTRY, SCREENING, SEED_CASES, SERVICES } from './seed'
 
 export const ACTOR: Record<Role, string> = {
   saksbehandler: 'Nora Berg',
@@ -83,14 +83,18 @@ let stageMs = 900
 /** Kun for tester: slå av forsinkelse. */
 export function setTiming(lat: [number, number], stage: number) { latency = lat; stageMs = stage }
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
-const now = () => new Date().toISOString()
+/** Klokkeforskyvning brukes bare når testdata med historikk bygges (seed). */
+let clockOffset = 0
+/** Mens testdata bygges, kjøres kall og trinn uten simulert forsinkelse. */
+let seeding = false
+const now = () => new Date(Date.now() + clockOffset).toISOString()
 const uuid = () => crypto.randomUUID()
 
 /** Simulert nettverksforsinkelse, delt med den skjermede tjenesten. */
 export const networkDelay = () => sleep(latency[0] + Math.random() * (latency[1] - latency[0]))
 
 async function call<T>(role: Role, perm: Perm, fn: () => T | Promise<T>): Promise<T> {
-  await sleep(latency[0] + Math.random() * (latency[1] - latency[0]))
+  if (!seeding) await sleep(latency[0] + Math.random() * (latency[1] - latency[0]))
   if (!PERMS[perm].includes(role)) throw new ApiError(403, `Rollen «${ACTOR[role]}» har ikke tilgang til ${perm}.`)
   const result = await fn()
   commit()
@@ -205,7 +209,7 @@ function controlScreening(c: Case) {
 
 function prepare(c: Case) {
   const version = (c.risk?.version ?? 0) + 1
-  c.risk = assessRisk(c, version)
+  c.risk = assessRisk(c, version, now())
   setCheck(c, 'risiko', { state: 'ok', detail: `Score ${c.risk.score} (${c.risk.band}) · ${c.risk.policy}`, source: c.risk.policy })
   c.status = settledStatus(c)
   audit(c, SYSTEM, 'Beslutningsgrunnlag klargjort', `Risiko v${version}: ${c.risk.score} · status: ${c.status}`)
@@ -221,7 +225,7 @@ function settledStatus(c: Case): CaseStatus {
 function startPipeline(c: Case, instant = false) {
   const run = (async () => {
     for (;;) {
-      if (!instant) await sleep(stageMs)
+      if (!instant && !seeding) await sleep(stageMs)
       const live = state.cases.find(x => x.id === c.id)
       if (live !== c) return // demoen er tilbakestilt
       const res = await runStage(c)
@@ -250,7 +254,7 @@ export interface NewCheckInput {
 function newCase(input: NewCheckInput, owner: string | null): Case {
   const id = uuid()
   const at = now()
-  const due = new Date(Date.now() + 3 * 864e5).toISOString()
+  const due = new Date(Date.parse(now()) + 3 * 864e5).toISOString()
   const pending = (key: CheckItem['key'], label: string): CheckItem => ({ key, label, state: 'pending', detail: 'Ikke kjørt', source: '', at: null })
   return {
     id, ref: `SAK-${++state.seq}`, tenantId: 'tenant-demo-advokat', orgNr: input.orgNr.replace(/\D/g, ''),
@@ -452,15 +456,30 @@ export function registerLaterChange(role: Role, caseId: string) {
 
 async function seed() {
   for (const s of SEED_CASES) {
+    clockOffset = -s.createdHoursAgo * 36e5
     const c = newCase(s, s.owner)
     c.urgency = s.urgency
-    c.createdAt = new Date(Date.now() - s.createdHoursAgo * 36e5).toISOString()
     c.dueAt = new Date(Date.now() + s.dueInDays * 864e5).toISOString()
     state.cases.push(c)
     audit(c, s.owner ?? SYSTEM, 'Oppdrag registrert')
     state.faults.registryDown = !!s.registryDown
     await startPipeline(c, true)
     state.faults.registryDown = false
+    clockOffset = 0
+  }
+  // Saker med historikk: kjøres gjennom de vanlige kommandoene, med klokken satt tilbake.
+  seeding = true
+  try {
+    for (const h of HISTORY_CASES) {
+      clockOffset = -h.daysAgo * 864e5
+      const c = await createCheck('saksbehandler', h)
+      await settled(c.id)
+      if (h.requestDocumentFor) await requestDocument('saksbehandler', c.id, h.requestDocumentFor)
+      if (h.decide) await decide('godkjenner', c.id, recommend(c.risk, evaluateBlockers(c)), h.decide)
+    }
+  } finally {
+    clockOffset = 0
+    seeding = false
   }
 }
 

@@ -78,6 +78,41 @@ export const REGISTRY: Record<string, RegistryRecord> = {
     ],
     edges: [edge('p-jon', 'p-havbris', 0.7, REG_NO), edge('p-ivan', 'p-havbris', 0.3, REG_NO)],
   },
+  '100500601': {
+    entry: {
+      orgNr: '100500601', legalName: 'Lyngheia Eksempel AS', form: 'Aksjeselskap', status: 'Aktiv',
+      roles: [{ role: 'Daglig leder', name: 'Tor Eksempel' }], source: REG_NO,
+    },
+    subjectId: 'p-lyngheia',
+    parties: [org('p-lyngheia', 'Lyngheia Eksempel AS', '100500601', 'NO', REG_NO), person('p-tor', 'Tor Eksempel', '1962', 'NO', REG_NO)],
+    edges: [edge('p-tor', 'p-lyngheia', 1, REG_NO)],
+  },
+  '100600701': {
+    entry: {
+      orgNr: '100600701', legalName: 'Bryggen Eksempel AS', form: 'Aksjeselskap', status: 'Aktiv',
+      roles: [{ role: 'Daglig leder', name: 'Eva Eksempel' }, { role: 'Styreleder', name: 'Jens Eksempel' }], source: REG_NO,
+    },
+    subjectId: 'p-bryggen',
+    parties: [
+      org('p-bryggen', 'Bryggen Eksempel AS', '100600701', 'NO', REG_NO),
+      person('p-eva', 'Eva Eksempel', '1979', 'NO', REG_NO),
+      person('p-jens', 'Jens Eksempel', '1958', 'NO', REG_NO),
+    ],
+    edges: [edge('p-eva', 'p-bryggen', 0.55, REG_NO), edge('p-jens', 'p-bryggen', 0.45, REG_NO)],
+  },
+  '5560000202': {
+    entry: {
+      orgNr: '5560000202', legalName: 'Norrsken Exempel AB', form: 'Aktiebolag', status: 'Aktiv',
+      roles: [{ role: 'VD', name: 'Elin Exempel' }], source: REG_SE,
+    },
+    subjectId: 'p-norrsken',
+    parties: [
+      org('p-norrsken', 'Norrsken Exempel AB', '5560000202', 'SE', REG_SE),
+      person('p-elin', 'Elin Exempel', '1984', 'SE', REG_SE),
+      org('p-ventures', 'Nordic Ventures Exempel Ltd', 'GB-09912345', 'GB', REG_SE),
+    ],
+    edges: [edge('p-elin', 'p-norrsken', 0.5, REG_SE), edge('p-ventures', 'p-norrsken', 0.5, REG_SE)],
+  },
   '5560000101': {
     entry: {
       orgNr: '5560000101', legalName: 'Sund Eksempel AB', form: 'Aktiebolag', status: 'Aktiv',
@@ -112,6 +147,10 @@ export const DOCUMENTED_OWNERS: Record<string, { parties: Party[]; edges: Owners
       edge('p-liis', 'p-baltic', 0.9, 'Kundedokument: aksjeeierbok'),
       edge('p-kari', 'p-baltic', 0.1, 'Kundedokument: aksjeeierbok'),
     ],
+  },
+  'p-ventures': {
+    parties: [person('p-oskar', 'Oskar Exempel', '1976', 'SE', 'Kundedokument: share register')],
+    edges: [edge('p-oskar', 'p-ventures', 1, 'Kundedokument: share register')],
   },
   'p-havn': {
     parties: [],
@@ -169,3 +208,21 @@ export const SEED_CASES: SeedCase[] = [
 
 export const ENABLED_COUNTRIES: Country[] = ['NO', 'SE', 'DK']
 export const SERVICES = ['company-transfer', 'estate', 'advisory'] as const
+
+/** Saker med historikk i testmiljøet: kjøres gjennom vanlige kommandoer med klokken satt tilbake. */
+export interface HistoryCase {
+  orgNr: string
+  country: Country
+  sector: Sector
+  service: string
+  daysAgo: number
+  requestDocumentFor?: string
+  /** Begrunnelse for beslutning (anbefalt utfall brukes). */
+  decide?: string
+}
+
+export const HISTORY_CASES: HistoryCase[] = [
+  { orgNr: '100500601', country: 'NO', sector: 'legal', service: 'company-transfer', daysAgo: 790, decide: 'Eierskap og representasjon dokumentert. Forsterkede tiltak for overdragelsen er gjennomført.' },
+  { orgNr: '100600701', country: 'NO', sector: 'legal', service: 'company-transfer', daysAgo: 95, decide: 'Kjent eierstruktur, ingen treff. Forsterkede tiltak for transaksjonsoppdraget er dokumentert.' },
+  { orgNr: '5560000202', country: 'SE', sector: 'legal', service: 'company-transfer', daysAgo: 1, requestDocumentFor: 'p-ventures' },
+]

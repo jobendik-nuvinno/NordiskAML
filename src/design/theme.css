@@ -183,3 +183,9 @@ img.broken-image-fallback {
     opacity: 1;
   }
 }
+
+/* Tydelig tastaturfokus i hele appen (UX-02). Designets teal, synlig mot både hvit og lys bakgrunn. */
+:where(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid #176f61;
+  outline-offset: 2px;
+}
