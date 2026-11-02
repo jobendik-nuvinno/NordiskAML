@@ -20,6 +20,9 @@ import { RiskScreen } from './Risk'
 import { ScopeScreen } from './Scope'
 import { ScreeningScreen } from './Screening'
 import { TenantAuditScreen } from './TenantAudit'
+import { DataSourcesScreen } from './DataSources'
+import { OperationsScreen } from './Operations'
+import { TenantOverviewScreen } from './TenantOverview'
 
 export const LIVE: Partial<Record<ScreenId, ComponentType>> = {
   queue: QueueScreen,
@@ -41,4 +44,7 @@ export const LIVE: Partial<Record<ScreenId, ComponentType>> = {
   members: MembersScreen,
   insights: InsightsScreen,
   portal: PortalScreen,
+  'tenant-overview': TenantOverviewScreen,
+  'data-sources': DataSourcesScreen,
+  operations: OperationsScreen,
 }
