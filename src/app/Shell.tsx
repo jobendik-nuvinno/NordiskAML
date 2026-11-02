@@ -205,7 +205,7 @@ export function AppShell() {
           </aside>
           <main className="min-w-0 flex-1 px-5 py-7 lg:px-8">
             {notice && <div className="mb-5"><NoticeBar notice={notice} dismiss={closeToast} /></div>}
-            <div key={screen} className="screen-in flex items-start gap-4 border-b border-[#DDE5EC] pb-5">
+            <div key={`head-${screen}`} className="screen-in flex items-start gap-4 border-b border-[#DDE5EC] pb-5">
               <span aria-hidden="true" className="mt-1 hidden h-11 w-11 shrink-0 place-items-center border border-[#C9DEDA] bg-gradient-to-br from-white to-[#EAF6F2] text-[#176F61] shadow-[0_6px_16px_-10px_rgba(23,111,97,0.6)] sm:grid">
                 <ScreenIcon screen={screen} size={20} />
               </span>
@@ -216,7 +216,7 @@ export function AppShell() {
               </div>
             </div>
             {CASE_SCREENS.includes(screen) && current && <CaseStrip c={current} />}
-            <div key={screen + (caseId ?? '')} className="screen-in pt-6">
+            <div key={`body-${screen}-${caseId ?? "ingen"}`} className="screen-in pt-6">
               {Live
                 ? (CASE_SCREENS.includes(screen) && !current ? <NeedCase go={go} /> : <Live />)
                 : <RenderScreen screen={screen as never} notify={staticNotify} country={country} chooseCountry={setCountry} go={s => go(s)} />}
