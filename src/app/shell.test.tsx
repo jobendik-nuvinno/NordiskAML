@@ -9,6 +9,7 @@ beforeAll(async () => { await resetDemo() })
 describe('appskall i Libans design', () => {
   it('rendrer topp, rollekort og sidemeny', () => {
     const html = renderToString(<AppShell />)
-    for (const t of ['NORDISK', 'Test som rolle', 'Platform Super Admin', 'Bedriftsadmin', 'Kunde', 'DIN FUNKSJON', 'Arbeidskø']) expect(html).toContain(t)
+    for (const t of ['NORDISK', 'Nora Berg', 'Saksbehandler', 'Arbeidskø', 'Søk i tildelte saker']) expect(html).toContain(t)
+    for (const t of ['Test som rolle', 'SKJERMER', 'Prototypeoversikt', 'Neste skjerm', 'Designskisse', 'Demo']) expect(html).not.toContain(t)
   })
 })

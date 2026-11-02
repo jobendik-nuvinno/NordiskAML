@@ -59,7 +59,7 @@ describe('triage og avslutning (INV-01, TXN-01)', () => {
     await closeInvestigation('hvitvaskingsansvarlig', inv.id, 'Mistanke ikke avkreftet; beslutning om rapport fattet av ansvarlig.', 'rapporteres')
     const [done] = await listInvestigations('hvitvaskingsansvarlig')
     expect(done.status).toBe('avsluttet')
-    expect(done.conclusion?.responsible).toBe('Hvitvaskingsansvarlig Demo')
+    expect(done.conclusion?.responsible).toBe('Marius A. Viken')
     expect(done.timeline.length).toBeGreaterThanOrEqual(3)
   })
 })

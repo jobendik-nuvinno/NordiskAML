@@ -137,7 +137,7 @@ function Overview({ c, role, goto }: { c: Case; role: Role; goto: (t: Tab) => vo
           <>
             <h2>Venter på kunde</h2>
             {openReq.map(r => <p key={r.id}>{r.title} · sendt {fmt(r.createdAt)}</p>)}
-            <p className="mut">Bytt rolle til «Kunde (portal)» for å svare i demoen.</p>
+            <p className="mut">Bytt rolle til «Kunde via portal» for å svare i demoen.</p>
           </>
         )}
         {c.status === 'review_ready' && (

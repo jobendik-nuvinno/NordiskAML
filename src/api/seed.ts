@@ -162,7 +162,7 @@ export interface SeedCase {
 
 export const SEED_CASES: SeedCase[] = [
   { orgNr: '100300401', country: 'NO', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: null, createdHoursAgo: 26, dueInDays: 1 },
-  { orgNr: '5560000101', country: 'SE', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: 'Saksbehandler Demo', createdHoursAgo: 50, dueInDays: 2 },
+  { orgNr: '5560000101', country: 'SE', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: 'Nora Berg', createdHoursAgo: 50, dueInDays: 2 },
   { orgNr: '100400501', country: 'NO', sector: 'legal', service: 'company-transfer', urgency: 'normal', owner: null, createdHoursAgo: 2, dueInDays: 5 },
   { orgNr: '10000101', country: 'DK', sector: 'legal', service: 'advisory', urgency: 'normal', owner: null, createdHoursAgo: 4, dueInDays: 3, registryDown: true },
 ]

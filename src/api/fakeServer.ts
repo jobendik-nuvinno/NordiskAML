@@ -10,14 +10,24 @@ import type {
 import { DOCUMENTED_OWNERS, ENABLED_COUNTRIES, REGISTRY, SCREENING, SEED_CASES, SERVICES } from './seed'
 
 export const ACTOR: Record<Role, string> = {
-  saksbehandler: 'Saksbehandler Demo',
-  godkjenner: 'Faglig godkjenner Demo',
-  hvitvaskingsansvarlig: 'Hvitvaskingsansvarlig Demo',
-  admin: 'Kundeadministrator (kommersiell)',
-  kunde: 'Kunde (portal)',
+  saksbehandler: 'Nora Berg',
+  godkjenner: 'Jonas Eide',
+  hvitvaskingsansvarlig: 'Marius A. Viken',
+  admin: 'Erik Dahl',
+  kunde: 'Kunde via portal',
   partner: 'Partnerintegrasjon',
 }
 const SYSTEM = 'System'
+
+/** Stillingsbetegnelse per rolle (aktørnavnene over er fiktive personer i testmiljøet). */
+export const ROLE_TITLE: Record<Role, string> = {
+  saksbehandler: 'Saksbehandler',
+  godkjenner: 'Faglig godkjenner',
+  hvitvaskingsansvarlig: 'Hvitvaskingsansvarlig',
+  admin: 'Bedriftsadministrator',
+  kunde: 'Kunde',
+  partner: 'Teknisk partner',
+}
 
 export class ApiError extends Error {
   constructor(public status: number, public title: string) { super(title) }
@@ -122,7 +132,7 @@ async function runStage(c: Case): Promise<StageResult> {
       c.scope.basis = covered === 'uklart'
         ? 'Uklart om rådgivningen er omfattet – sendt til fagansvarlig'
         : `Hvitvaskingsloven § 4 (demo) · ${c.scope.country}-pakke`
-      c.scope.responsible = covered === 'uklart' ? 'Fagansvarlig AML' : (c.owner ?? 'Saksbehandler Demo')
+      c.scope.responsible = covered === 'uklart' ? 'Fagansvarlig AML' : (c.owner ?? 'Nora Berg')
       setCheck(c, 'formal', { state: covered === 'ja' ? 'ok' : 'open', detail: c.scope.basis, source: 'Oppdragsavgrensning' })
       audit(c, SYSTEM, 'Oppdrag avgrenset', `Omfattet: ${covered}`)
       return 'continue'

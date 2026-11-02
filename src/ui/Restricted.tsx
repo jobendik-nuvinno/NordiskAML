@@ -128,7 +128,7 @@ function InvestigationDetail({ inv, role, back }: { inv: Investigation; role: Ro
           <input id="i-note" className="form" value={note} disabled={closed} onChange={e => setNote(e.target.value)} />
           <div className="row" style={{ borderTop: 0 }}>
             <button className="primary" disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { finding, hypothesis, priority }, note), 'Undersøkelsen er oppdatert').then(() => setNote(''))}>Lagre</button>
-            {!inv.owner && <button disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { owner: 'Hvitvaskingsansvarlig Demo' }), 'Du er eier')}>Ta eierskap</button>}
+            {!inv.owner && <button disabled={busy || closed} onClick={() => run(() => updateInvestigation(role, inv.id, { owner: 'Marius A. Viken' }), 'Du er eier')}>Ta eierskap</button>}
           </div>
         </div>
         <h3>Avslutning</h3>
