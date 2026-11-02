@@ -15,7 +15,7 @@ describe('MembersScreen', () => {
   it('viser levende medlemmer, roller, status og nøkkeltall', () => {
     const html = render()
     expect(html).toContain('Medlemskap og faglig delegasjon')
-    for (const t of ['Nora Berg', 'Jonas Eide', 'Marius A. Viken', 'Sara Holm', 'Tone Lie', 'Henrik Aas', 'nora.berg@nordictrade.example'])
+    for (const t of ['Nora Berg', 'Jonas Eide', 'Marius A. Viken', 'Sara Holm', 'Tone Lie', 'Lars Moen', 'nora.berg@nordictrade.example'])
       expect(html).toContain(t)
     expect(html).toContain('Stedfortreder hvitvaskingsansvarlig')
     expect(html).toContain('Revisor (kun lesing)')

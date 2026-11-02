@@ -69,7 +69,7 @@ function seed(): State {
       m('m-sara', 'Sara Holm', 'sara.holm', ['stedfortreder'], { lastLogin: iso(t - 4 * DAY), activeSessions: 0 }),
       m('m-erik', 'Erik Dahl', 'erik.dahl', ['bedriftsadministrator'], { lastLogin: iso(t - 5 * 6e4) }),
       m('m-tone', 'Tone Lie', 'tone.lie', ['revisor'], { mfa: true, lastLogin: iso(t - 6 * DAY), accessExpires: iso(t + 18 * DAY), activeSessions: 0 }),
-      m('m-henrik', 'Henrik Aas', 'henrik.aas', ['saksbehandler'], { status: 'invitert', mfa: false, lastLogin: null, activeSessions: 0 }),
+      m('m-lars', 'Lars Moen', 'lars.moen', ['saksbehandler'], { status: 'invitert', mfa: false, lastLogin: null, activeSessions: 0 }),
     ],
     grants: [],
     audit: [{ id: uuid(), at: iso(t - 7 * DAY), actor: 'System', action: 'Medlemsliste synkronisert fra Entra ID', target: TENANT, detail: '7 medlemmer' }],
