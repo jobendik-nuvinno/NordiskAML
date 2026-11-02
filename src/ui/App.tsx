@@ -4,6 +4,8 @@ import type { Role } from '../domain/types'
 import { CaseView } from './CaseView'
 import { useStore, useToast } from './hooks'
 import { NewCheck } from './NewCheck'
+import { PartnerConsole } from './PartnerConsole'
+import { resetPartnerApi } from '../api/partnerApi'
 import { Portal } from './Portal'
 import { Workqueue } from './Workqueue'
 
@@ -33,7 +35,7 @@ export function App() {
             <input type="checkbox" checked={state.faults.registryDown} onChange={e => setRegistryDown(e.target.checked)} />
             Simuler kildeutfall (503)
           </label>
-          <button onClick={() => { if (confirm('Tilbakestille demoen til startdata?')) { resetDemo(); setPage({ name: 'queue' }) } }}>
+          <button onClick={() => { if (confirm('Tilbakestille demoen til startdata?')) { resetPartnerApi(); resetDemo(); setPage({ name: 'queue' }) } }}>
             Tilbakestill demo
           </button>
         </div>
@@ -53,7 +55,7 @@ export function App() {
           {internal && page.name === 'new' && role !== 'saksbehandler' && <Workqueue open={id => setPage({ name: 'case', id })} />}
           {internal && page.name === 'case' && <CaseView role={role} id={page.id} back={() => setPage({ name: 'queue' })} />}
           {role === 'kunde' && <Portal />}
-          {role === 'partner' && <article><div className="cap">Teknisk partner</div><h1>Partner-API</h1><p className="sub">Konsollen kommer i S07.</p></article>}
+          {role === 'partner' && <PartnerConsole />}
         </section>
         <footer className="tiny">
           Prototype med simulert backend i nettleseren. Kun fiktive data – ingen registeroppslag, lagring hos tredjepart eller sending.

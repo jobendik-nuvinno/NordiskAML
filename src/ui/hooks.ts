@@ -2,7 +2,7 @@ import { useState, useSyncExternalStore } from 'react'
 import { ApiError, store } from '../api/fakeServer'
 
 export function useStore() {
-  useSyncExternalStore(store.subscribe, store.getVersion)
+  useSyncExternalStore(store.subscribe, store.getVersion, store.getVersion)
   return store.state
 }
 
@@ -15,7 +15,7 @@ export function showToast(text: string, kind: 'ok' | 'err' = 'ok') {
   toastListeners.forEach(f => f())
 }
 export function useToast(): [Toast, () => void] {
-  const t = useSyncExternalStore(fn => { toastListeners.add(fn); return () => { toastListeners.delete(fn) } }, () => toast)
+  const t = useSyncExternalStore(fn => { toastListeners.add(fn); return () => { toastListeners.delete(fn) } }, () => toast, () => toast)
   return [t, () => { toast = null; toastListeners.forEach(f => f()) }]
 }
 

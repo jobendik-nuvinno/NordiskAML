@@ -18,7 +18,8 @@ export function PartnerConsole() {
   const [busy, setBusy] = useState(false)
   const [res, setRes] = useState<{ req: string; r: ApiResponse } | null>(null)
   const [parseError, setParseError] = useState('')
-  useSyncExternalStore(webhookLog.subscribe, () => webhookLog.get().reduce((n, e) => n + e.deliveries.length, webhookLog.get().length))
+  const logVersion = () => webhookLog.get().reduce((n, e) => n + e.deliveries.length, webhookLog.get().length)
+  useSyncExternalStore(webhookLog.subscribe, logVersion, logVersion)
   const events = webhookLog.get()
 
   async function send(m: Method, k: string, text: string) {
