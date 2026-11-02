@@ -41,12 +41,10 @@
       "gate": "G1",
       "owner": "Fagansvarlig AML",
       "test_run": "AT-13",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Forsøk på å slå av et påkrevd tiltak avvises og logges."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-004",
@@ -57,12 +55,10 @@
       "gate": "G1",
       "owner": "Fagansvarlig AML",
       "test_run": "AT-13",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "Tilbakedatert test bruker datidens versjon; samme bruker kan ikke både foreslå og sluttgodkjenne."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-005",
@@ -851,12 +847,10 @@
       "gate": "G1",
       "owner": "Sikkerhetsarkitekt",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "must",
       "acceptance": [
         "Support uten aktiv tilgang kan bare se tekniske driftstall. En sperret bruker kan ikke gjenbruke en sesjon for nye sensitive handlinger."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-057",
@@ -915,12 +909,10 @@
       "gate": "G2",
       "owner": "Sikkerhetsarkitekt",
       "test_run": "Kravtest",
-      "priority": "could",
+      "priority": "should",
       "acceptance": [
         "Deprovisjonering trekker tilgang tilbake; nødstilgang utløser varsel, utløper og gjennomgås i ettertid."
-      ],
-      "status": "deferred",
-      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+      ]
     },
     {
       "id": "R-061",
