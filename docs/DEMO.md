@@ -4,7 +4,7 @@ Varighet: 10–12 minutter for hele løpet, 5 minutter for kortversjonen (steg 1
 Rolle og funksjon byttes i **brukermenyen øverst til høyre**. Der ligger også **Testmiljø** med
 «Simuler at registerkilden er nede» og «Tilbakestill testdata».
 
-**Før du starter:** `npm run dev`, åpne http://localhost:5173 og velg **Tilbakestill testdata** i brukermenyen.
+**Før du starter:** åpne https://jobendik-nuvinno.github.io/NordiskAML/ (eller kjør `npm run dev` lokalt) og velg **Tilbakestill testdata** i brukermenyen.
 Alle foretak, personer og lister er fiktive testdata.
 
 ## Kortversjonen: fra organisasjonsnummer til etterprøvbar beslutning

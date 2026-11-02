@@ -5,6 +5,8 @@ terrorfinansiering for nordiske rapporteringspliktige. Grunnlaget er kravspesifi
 (`Nordisk_AML_kravspesifikasjon_v1.docx`), kravregisteret (`AML_kravregister.xlsx`) og partnerkontrakten
 (`AML_partner_API.yaml`). Det visuelle uttrykket er hentet fra MagicPath-designet *AML Command Center*.
 
+**Åpne prototypen:** https://jobendik-nuvinno.github.io/NordiskAML/ (publiseres automatisk ved hver push til `main` når alle tester er grønne).
+
 > Alle foretak, personer, lister og registersvar er fiktive testdata. Ingen data forlater nettleseren.
 
 ## Kom i gang
