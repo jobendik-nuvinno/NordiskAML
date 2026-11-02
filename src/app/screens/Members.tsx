@@ -48,7 +48,7 @@ export function MembersScreen() {
               <span><span className="block">{m.name}{m.name === actor ? <span className="ml-1.5 text-[10px] font-normal text-[#8692A1]">(deg)</span> : null}</span><small className="block text-[10px] font-normal text-[#718096]">{m.email}</small></span>,
               <span className="flex flex-wrap gap-1">{m.roles.map(r => <Badge key={r} tone={roleTone(r)}>{ROLE_LABEL[r]}</Badge>)}</span>,
               <Badge tone={STATUS[m.status][0]}>{STATUS[m.status][1]}</Badge>,
-              <span className="text-[11px]">{m.sso} · {m.mfa ? 'MFA' : <b className="text-[#A2661A]">MFA ikke satt opp</b>}</span>,
+              <span className="whitespace-nowrap text-[11px]">{m.sso}<br />{m.mfa ? <Badge tone="green">MFA</Badge> : <Badge tone="amber">Ingen MFA</Badge>}</span>,
               <span className="text-[11px]">{m.status === 'invitert' && !m.lastLogin ? 'Ikke logget inn' : fmt(m.lastLogin)}</span>,
               <span className="text-[11px]">{m.accessExpires ? new Date(m.accessExpires).toLocaleDateString('nb-NO') : 'Ingen'}</span>,
               <span className="flex flex-wrap gap-3 whitespace-nowrap">

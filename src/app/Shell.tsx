@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { resetPartnerApi } from '../api/partnerApi'
 import { ACTOR, resetDemo, ROLE_TITLE, setRegistryDown, STAGE_LABEL, STAGES, store } from '../api/fakeServer'
 import { resetRestricted } from '../api/restrictedServer'
+import { resetPolicies } from '../api/policyServer'
+import { resetMembers } from '../api/membersServer'
 import {
   navigation as designNav, NoticeBar, RenderScreen, screenTitles as designTitles, type Country, type NavGroup, type Notice,
 } from '../design/AMLCommandCenter'
@@ -130,7 +132,7 @@ export function AppShell() {
   const current = caseId ? state.cases.find(c => c.id === caseId) : undefined
   const reset = () => {
     if (!confirm('Tilbakestille testmiljøet til startdata?')) return
-    resetPartnerApi(); resetRestricted(); resetDemo(); setCaseId(null); go(ROLES[designRole].defaultScreen)
+    resetPartnerApi(); resetRestricted(); resetPolicies(); resetMembers(); resetDemo(); setCaseId(null); go(ROLES[designRole].defaultScreen)
   }
 
   return (
