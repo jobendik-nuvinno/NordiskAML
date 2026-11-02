@@ -2,7 +2,7 @@
 id: S01
 title: Skjelett, simulert backend og arbeidskø
 milestone: M1
-status: planned
+status: active
 requirements: [R-079, R-080]
 depends_on: []
 blocked_by: ""
