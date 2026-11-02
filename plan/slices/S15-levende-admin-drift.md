@@ -2,7 +2,7 @@
 id: S15
 title: Levende virksomhetsoversikt, datakilder og driftsinnsikt
 milestone: M3
-status: active
+status: review
 requirements: [R-036, R-064, R-073]
 depends_on: [S13]
 blocked_by: ""
@@ -14,6 +14,7 @@ Virksomhetsoversikt, Datakilder og rettigheter og Driftsinnsikt bruker levende d
 - [ ] Kildeutfall i testmiljøet vises i alle tre skjermene
 - [ ] Driftsinnsikt viser bare tekniske tall, ingen kundenavn (SEC-02)
 - [ ] Datakilder viser rett til oppslag per kilde og formål (INT-04)
-- [ ] `plan/verify.sh --slice S15 -- npm run check` passerer på et rent tre
+- [x] `plan/verify.sh --slice S15 -- npm run check` passerer på et rent tre
 
 ## Outcome
+Virksomhetsoversikt, Datakilder og rettigheter og Driftsinnsikt bruker levende data via felles kildehelse (sourceHealth.ts). Tom eller delvis feed er aldri grønn, manglende telemetri flagges, og drift viser ingen kundedata. Bygget av bakgrunnsagent. Skjermbilde av Driftsinnsikt kontrollert. Står i review til teamet har klikket gjennom.

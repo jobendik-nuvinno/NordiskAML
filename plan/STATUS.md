@@ -1,13 +1,13 @@
 ---
-updated: 2026-11-02T10:50:00Z
+updated: 2026-11-02T12:20:00Z
 next:
   - "Klikk gjennom demo-manuset i PROJECT.md på http://localhost:5180 (npm run dev). Flytt skiver fra review til done når de er bekreftet."
   - "Test kjerneflyten med bare tastatur (UX-02)"
 waiting_on:
-  - "Manuell gjennomklikking i nettleser av teamet (S01–S11 står i review)"
+  - "Manuell gjennomklikking i nettleser av teamet (S01–S16 står i review)"
 blockers: []
 ---
-Alle elleve skivene er bygget. UI-et er byttet til Libans MagicPath-design (S11, D-006), og den gamle src/ui/ er fjernet. Hele suiten (`plan/verify.sh -- npm run check`: typesjekk + 56 tester, inkludert
+Alle seksten skivene er bygget. Demomanus: docs/DEMO.md. UI-et er byttet til Libans MagicPath-design (S11, D-006), og den gamle src/ui/ er fjernet. Hele suiten (`plan/verify.sh -- npm run check`: typesjekk + 89 tester, inkludert
 en røyktest som rendrer hele hovedløpet) passerer på et rent tre. Ingen skive er satt til done, fordi
 UI-et ikke er klikket gjennom i en nettleser.
 
