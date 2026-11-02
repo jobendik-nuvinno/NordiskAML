@@ -1,0 +1,1312 @@
+{
+  "schema": "claudevision.requirements/1",
+  "source": "Nordisk_AML_kravspesifikasjon_v1.docx (samme innhold som .pdf); kravregister AML_kravregister.xlsx; API-kontrakt AML_partner_API.yaml",
+  "requirements": [
+    {
+      "id": "R-001",
+      "title": "GOV-01 Virksomhetsrisiko",
+      "text": "Virksomhetsrisiko. Registrer produkter, geografi, kundetyper, kanaler, trusler, sårbarheter og tiltak; skill iboende fra gjenværende risiko.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-01",
+      "gate": "G1",
+      "owner": "Fagansvarlig AML",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Et nytt tjenesteområde gjør berørte rutiner synlige og krever ny signering av vurderingen."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-002",
+      "title": "GOV-02 Oppdragsavgrensning",
+      "text": "Oppdragsavgrensning. Avgjør land, sektor, tjeneste og om oppdraget er omfattet. Lagre vurdering, hjemmel og ansvarlig.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-02",
+      "gate": "G1",
+      "owner": "Fagansvarlig AML",
+      "test_run": "AT-02",
+      "priority": "must",
+      "acceptance": [
+        "To oppdrag for samme klient kan få ulikt utfall; uklart virkeområde sendes til fagansvarlig."
+      ]
+    },
+    {
+      "id": "R-003",
+      "title": "GOV-03 Regelhierarki",
+      "text": "Regelhierarki. Kombiner gjeldende lands- og sektorregler med virksomhetens godkjente policy. Lokale regler kan skjerpe, ikke slå av, obligatoriske krav.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-03",
+      "gate": "G1",
+      "owner": "Fagansvarlig AML",
+      "test_run": "AT-13",
+      "priority": "could",
+      "acceptance": [
+        "Forsøk på å slå av et påkrevd tiltak avvises og logges."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-004",
+      "title": "GOV-04 Publisering",
+      "text": "Publisering. Versjoner regeltekst, maskinregel, kilde, virkedato og eier. Krev to ulike godkjennere for publisering og tillat tilbakeføring til gyldig versjon.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-04",
+      "gate": "G1",
+      "owner": "Fagansvarlig AML",
+      "test_run": "AT-13",
+      "priority": "could",
+      "acceptance": [
+        "Tilbakedatert test bruker datidens versjon; samme bruker kan ikke både foreslå og sluttgodkjenne."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-005",
+      "title": "GOV-05 Opplæring og internkontroll",
+      "text": "Opplæring og internkontroll. Tildel rollebasert opplæring og prøvekontroller. Registrer frist, resultat, avvik og tiltakseier.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-05",
+      "gate": "G1",
+      "owner": "Fagansvarlig AML",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Revisor kan se hvem som har attestert rutinen og hvilke avvik som ikke er lukket."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-006",
+      "title": "GOV-06 Kontrollendringer",
+      "text": "Kontrollendringer. Simuler ny regelpakke mot et godkjent historisk utvalg før aktivering. Vis forskjeller og grupper saker som krever revurdering.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhet, sektor og regelverk · GOV-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "GOV-06",
+      "gate": "G2",
+      "owner": "Fagansvarlig AML",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En endret PEP-regel viser berørte saker uten å overskrive tidligere beslutninger."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-007",
+      "title": "KYC-01 Sikker invitasjon",
+      "text": "Sikker invitasjon. Bind invitasjonen til virksomhet, kontroll og mottaker; krev ny identitetsbekreftelse ved sensitiv visning.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-01",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Videresendt eller utløpt lenke gir ingen persondata; ny invitasjon opphever den gamle."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-008",
+      "title": "KYC-02 Identitetsbevis",
+      "text": "Identitetsbevis. Verifiser eID-resultat fra inngått leverandøravtale; registrer styrkenivå, transaksjonsreferanse, tidspunkt og kontrollert identitet.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-02",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "AT-01",
+      "priority": "could",
+      "acceptance": [
+        "Signatur, mottaker, tidspunkt eller nonce som ikke stemmer gir feil, aldri godkjent identitet."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-009",
+      "title": "KYC-03 Alternativ legitimasjon",
+      "text": "Alternativ legitimasjon. Tilby dokumentert manuell identitetskontroll når eID mangler. Landspakken styrer evidens, nødvendige kopier og godkjenner.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-03",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Person uten nordisk eID kan sende relevant dokument og få en reell manuell vurdering."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-010",
+      "title": "KYC-04 Formål og forventet bruk",
+      "text": "Formål og forventet bruk. Innhent oppdragets formål, art og forventede aktiviteter fra kunde eller dokumentert kilde; still oppfølgingsspørsmål ved avvik.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-04",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Uforklart avvik mellom svar og virksomhetsprofil hindrer ferdigstilling av grunnlaget."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-011",
+      "title": "KYC-05 Representasjonsrett",
+      "text": "Representasjonsrett. Kontroller hvem som handler for kunden og hva vedkommende kan gjøre; dokumenter fullmakt og utløp.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-05",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Gyldig eID uten tilstrekkelig fullmakt gir ikke rett til å representere selskapet."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-012",
+      "title": "KYC-06 Tilgjengelig selvbetjening",
+      "text": "Tilgjengelig selvbetjening. Lagre utkast sikkert; tillat korreksjon, opplasting og kontakt med saksbehandler. Varsler skal ikke inneholde grunn til undersøkelse.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Personkontroll og kundeportal · KYC-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "KYC-06",
+      "gate": "G1",
+      "owner": "Produkteier kundekontroll",
+      "test_run": "Kravtest",
+      "priority": "must",
+      "acceptance": [
+        "En avbrutt registrering kan gjenopptas; utløpt fullmakt gir bare nøytral beskjed utad."
+      ]
+    },
+    {
+      "id": "R-013",
+      "title": "UBO-01 Registeroppslag",
+      "text": "Registeroppslag. Normaliser juridisk navn, nasjonal identifikator, selskapsform, status, roller og oppslagsdato. Bevar kilde og gyldighetsperiode.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-01",
+      "gate": "G1",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "Kravtest",
+      "priority": "must",
+      "acceptance": [
+        "Motstridende selskapsstatus lagres som konflikt med begge kilder, ikke som sist mottatte sannhet."
+      ]
+    },
+    {
+      "id": "R-014",
+      "title": "UBO-02 Eiergraf",
+      "text": "Eiergraf. Modeller person, selskap og juridisk arrangement; registrer eierandel, stemmerett, avtale eller annen kontroll på hver forbindelse.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-02",
+      "gate": "G1",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "AT-03",
+      "priority": "must",
+      "acceptance": [
+        "Samme person med eierskap gjennom to selskaper vises én gang med begge stier bevart."
+      ]
+    },
+    {
+      "id": "R-015",
+      "title": "UBO-03 Kontrolltolkning",
+      "text": "Kontrolltolkning. Beregn økonomisk andel separat fra rettslig kontroll etter aktiv landspakke. Dokumenter avtaler, stemmer og indirekte kontroll.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-03",
+      "gate": "G1",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "AT-03",
+      "priority": "must",
+      "acceptance": [
+        "60 % av 60 % kan vises som 36 % økonomisk andel; klassifisering må vise den gjeldende regelen."
+      ]
+    },
+    {
+      "id": "R-016",
+      "title": "UBO-04 Uavklart struktur",
+      "text": "Uavklart struktur. Oppdag sirkler, manglende ledd, utenlandske ledd og uenighet med register. Be om dokumentasjon; ingen automatisk oppføring som «ingen eier».",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-04",
+      "gate": "G1",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "AT-03",
+      "priority": "must",
+      "acceptance": [
+        "A → B → A avsluttes som uavklart og henger ikke. Reserveprosedyre krever hjemmel og dokumenterte forsøk."
+      ]
+    },
+    {
+      "id": "R-017",
+      "title": "UBO-05 Registeravvik",
+      "text": "Registeravvik. Gi ansvarlig en sammenligning av kundens forklaring og registret. Opprett avviksløp der landsregel krever videre håndtering.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-05",
+      "gate": "G1",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Logg viser hvilke opplysninger som spriker, vurdering, eventuell kanal, frist og kvittering."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-018",
+      "title": "UBO-06 Historisk graf",
+      "text": "Historisk graf. Vis tidsstemplet før/etter-bilde og utløs kontroll av nye relevante personer når en eier eller kontrollform endres.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bedriftskontroll og eierskap · UBO-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UBO-06",
+      "gate": "G2",
+      "owner": "Fagansvarlig KYB",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Ny faktisk kontrollør screenes uten at historiske eierskapsbilder eller vurderinger overskrives."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-019",
+      "title": "SCR-01 Kildedekning",
+      "text": "Kildedekning. Knytt lister og jurisdiksjoner til virksomhet, tjeneste og rettsgrunnlag. Lagre listeversjon, publiserings- og mottakstid.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-01",
+      "gate": "G1",
+      "owner": "Ansvarlig screening",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En foreldet påkrevd liste gjør resultatet ufullstendig, selv ved null navnetreff."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-020",
+      "title": "SCR-02 Navnesammenligning",
+      "text": "Navnesammenligning. Bruk alias, skriftvarianter og identifikatorer. Vis samsvar og avvik per felt med oppgitt matchmetode.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-02",
+      "gate": "G1",
+      "owner": "Ansvarlig screening",
+      "test_run": "AT-04",
+      "priority": "should",
+      "acceptance": [
+        "Et navnelikt treff uten fødselsdato går til vurdering; ulik translitterasjon testes i referansesettet."
+      ]
+    },
+    {
+      "id": "R-021",
+      "title": "SCR-03 PEP og nærstående",
+      "text": "PEP og nærstående. Vurder verv, periode, familie og kjente medarbeidere etter landspakke. Iverksett relevante forsterkede tiltak, ikke automatisk avslag.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-03",
+      "gate": "G1",
+      "owner": "Ansvarlig screening",
+      "test_run": "AT-04",
+      "priority": "could",
+      "acceptance": [
+        "Bekreftet PEP åpner tiltak for kilde til midler/formue, relevant godkjenning og oppfølging."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-022",
+      "title": "SCR-04 Sanksjonsalarm",
+      "text": "Sanksjonsalarm. Gi potensielt relevant treff egen hastekanal. Kartlegg også eierskap/kontroll etter sanksjonsregimet, ikke AML-terskelen.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-04",
+      "gate": "G1",
+      "owner": "Ansvarlig screening",
+      "test_run": "AT-05",
+      "priority": "should",
+      "acceptance": [
+        "Treff oppretter hasteoppgave og sperrer automatisk klarsignal; frist overskrives ikke av vanlig arbeidskø."
+      ]
+    },
+    {
+      "id": "R-023",
+      "title": "SCR-05 Falske treff",
+      "text": "Falske treff. Tillat tidsavgrenset, begrunnet treffavklaring per virksomhet, part, liste og identitet; materiell endring åpner treffet igjen.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-05",
+      "gate": "G1",
+      "owner": "Ansvarlig screening",
+      "test_run": "AT-04",
+      "priority": "should",
+      "acceptance": [
+        "Ny fødselsdato eller nytt listegrunnlag utløser revurdering av tidligere avklart navnelikhet."
+      ]
+    },
+    {
+      "id": "R-024",
+      "title": "SCR-06 Negativ omtale",
+      "text": "Negativ omtale. Bruk bare tillatte kilder. Skille påstand, tiltale, avgjørelse, rettelse og navnelikhet. Vis dato og originalkilde.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · PEP, sanksjoner og medieopplysninger · SCR-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SCR-06",
+      "gate": "G2",
+      "owner": "Ansvarlig screening",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En dementert artikkel merkes med rettelsen. Ingen automatisk konklusjon om skyld eller avslutning."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-025",
+      "title": "RSK-01 Forklarbar risikoprofil",
+      "text": "Forklarbar risikoprofil. Versjoner faktorer for kunde, produkt, kanal, land og forventet bruk. Vis kilde, bidrag, terskel og eventuelle obligatoriske tiltak.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-01",
+      "gate": "G1",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "must",
+      "acceptance": [
+        "Saksbehandler kan gjenskape samme anbefaling fra identisk databilde, policy og versjon."
+      ]
+    },
+    {
+      "id": "R-026",
+      "title": "RSK-02 Blokkeringsrekkefølge",
+      "text": "Blokkeringsrekkefølge. Evaluer datakvalitet, sanksjonsalarm og andre ufravikelige sperrer før ruting etter poengsum.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-02",
+      "gate": "G1",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "AT-03",
+      "priority": "must",
+      "acceptance": [
+        "Lav risikoscore kombinert med uavklart eier gir ikke klart grunnlag eller godkjenning."
+      ]
+    },
+    {
+      "id": "R-027",
+      "title": "RSK-03 Forsterkede tiltak",
+      "text": "Forsterkede tiltak. Opprett forsterket kontroll med tiltaksliste, midlenes opprinnelse, formuens opprinnelse, dokumentasjon og riktig godkjenner.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-03",
+      "gate": "G1",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "AT-04",
+      "priority": "could",
+      "acceptance": [
+        "Ubesvart obligatorisk tiltak kan ikke kvitteres ut med en samlet vurderingskommentar."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-028",
+      "title": "RSK-04 Reell beslutning",
+      "text": "Reell beslutning. Skille maskinelt ferdigstilt grunnlag fra beslutning om kundeforhold. Gi beslutningstaker myndighet, tid og mulighet til å avvike.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-04",
+      "gate": "G1",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "AT-01",
+      "priority": "must",
+      "acceptance": [
+        "Integrasjonsbruker eller KI kan ikke fatte sluttbeslutning. Overprøving krever begrunnelse og ny versjon."
+      ]
+    },
+    {
+      "id": "R-029",
+      "title": "RSK-05 Ufullstendige tiltak",
+      "text": "Ufullstendige tiltak. Manglende kundetiltak rutes til ansvarlig for å vurdere etablering, begrensning, avvikling eller undersøkelser etter land og sektor.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-05",
+      "gate": "G1",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Avsluttet frist avviser ikke kunden automatisk; beslutning og alternative tiltak dokumenteres."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-030",
+      "title": "RSK-06 Revurdering og retting",
+      "text": "Revurdering og retting. Rett feil med et nytt beslutningsgrunnlag. Støtt forklaring og bestridelse der aktuelt, uten å røpe skjermet rapportering.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Risiko, forsterkede tiltak og beslutning · RSK-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "RSK-06",
+      "gate": "G2",
+      "owner": "Hvitvaskingsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En korrigert identitet gir ny vurdering, uendret gammel versjon og separat lovlig svar til kunden."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-031",
+      "title": "MON-01 Kontrollkalender",
+      "text": "Kontrollkalender. Beregn neste kontroll fra land, risiko og hendelser. Vis forfall og eskaler oversittelse til stedfortreder.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-01",
+      "gate": "G1",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En passert dato endrer status til forfalt, ikke fornyet. En e-post alene oppfyller ikke kontrollen."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-032",
+      "title": "MON-02 Rescreening",
+      "text": "Rescreening. Ta inn listeendringer, finn berørte aktive parter og dokumenter skannet populasjon, unntak og resultat.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-02",
+      "gate": "G1",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "AT-06",
+      "priority": "could",
+      "acceptance": [
+        "Ved ny liste stemmer antall fullførte, ventende og feilede med antall berørte parter."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-033",
+      "title": "MON-03 Kildeutfall",
+      "text": "Kildeutfall. Bruk tidsgrense per kilde, begrensede nye forsøk, feilkø og varsel til driftsvakt. Gjenoppta fra siste bekreftede posisjon.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-03",
+      "gate": "G1",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "AT-06",
+      "priority": "must",
+      "acceptance": [
+        "Leverandør med HTTP 503 medfører ventestatus. Etter gjenoppretting oppstår ingen dobbeltkontroll."
+      ]
+    },
+    {
+      "id": "R-034",
+      "title": "MON-04 Endret kundebilde",
+      "text": "Endret kundebilde. Reager på endringer i eiere, styre, dokumenter og aktivitet. Prioriter materielle endringer, grupper duplikater.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-04",
+      "gate": "G2",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "To kopier av samme registerhendelse gir én oppgave; en ny kontrollør screenes særskilt."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-035",
+      "title": "MON-05 Fornyelse uten gjentakelse",
+      "text": "Fornyelse uten gjentakelse. Gjenbruk bare oppdatert, tillatt dokumentasjon innen samme virksomhet og formål. Be kunden kun om det som mangler.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-05",
+      "gate": "G2",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Utløpt opplysning kan ikke gjenbrukes; kunden får bare spørsmål knyttet til det åpne behovet."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-036",
+      "title": "MON-06 Kontrolldekning",
+      "text": "Kontrolldekning. Vis forsinkelse fra kildens publisering separat fra intern behandlingstid, med restkø og tid siden siste vellykkede kontroll.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Løpende kontroll og endringsvarsler · MON-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "MON-06",
+      "gate": "G2",
+      "owner": "Ansvarlig datakvalitet",
+      "test_run": "AT-06",
+      "priority": "could",
+      "acceptance": [
+        "En tom eller delvis feed kan ikke gi grønt dashboard selv om selve importjobben svarte OK."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-037",
+      "title": "TXN-01 Manuell observasjon",
+      "text": "Manuell observasjon. La saksbehandler registrere en mistenkelig aktivitet eller transaksjon uten bankfeed og uten etablert kundeforhold.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-01",
+      "gate": "G1",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Et avbrutt oppdrag kan registreres og undersøkes uten kontonummer eller ferdig KYC-profil."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-038",
+      "title": "TXN-02 Inntak og avstemming",
+      "text": "Inntak og avstemming. Ta inn batch og hendelser med ekstern ID, originalvaluta, retning, tidspunkt, status og motpart. Avstem antall og sum per valuta.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-02",
+      "gate": "G3",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "AT-11",
+      "priority": "could",
+      "acceptance": [
+        "Samme betaling levert tre ganger teller én gang. Reversering med separat ID bevarer spor til originalen."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-039",
+      "title": "TXN-03 Risikoscenarioer",
+      "text": "Risikoscenarioer. Uttrykk mønstre som tredjepartsbetaling, rask videreføring, oppsplitting og avvik fra forventet bruk. Valider per sektor og datagrunnlag.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-03",
+      "gate": "G3",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "AT-11",
+      "priority": "could",
+      "acceptance": [
+        "Syntetisk kjent mønster oppretter forklarbart varsel med inngående transaksjoner og tidsvindu."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-040",
+      "title": "TXN-04 Klientkonto",
+      "text": "Klientkonto. Koble inn- og utbetaling til oppdrag, bo, rett eier og dokumentert mottaker når mandat finnes. Håndter uallokerte midler som avvik.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-04",
+      "gate": "G3",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Utbetaling til en ny tredjepart uten dokumentert kobling åpner sak; systemet utfører ingen betaling."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-041",
+      "title": "TXN-05 Handling i eksternt system",
+      "text": "Handling i eksternt system. Skill anbefalt hold, sendt instruks og bekreftet handling. Krev avtalt mandat, autorisert kanal, kvittering og fristvakt.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-05",
+      "gate": "G3",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "AT-05",
+      "priority": "could",
+      "acceptance": [
+        "Ved timeout står handlingen ubekreftet, og vakt varsles. UI viser aldri «fryst» uten bekreftelse."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-042",
+      "title": "TXN-06 Tilbakeprøving",
+      "text": "Tilbakeprøving. Kjør scenarioer i skyggemodus før produksjon. Test sen levering, valutakurser, UTC, retur og falske positive.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Transaksjoner og klientmidler · TXN-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "TXN-06",
+      "gate": "G3",
+      "owner": "Produkteier transaksjoner",
+      "test_run": "AT-11",
+      "priority": "could",
+      "acceptance": [
+        "Et sent mottatt oppgjør kjøres mot riktig historisk periode uten å duplisere tidligere alarm."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-043",
+      "title": "INV-01 Triage og undersøkelse",
+      "text": "Triage og undersøkelse. Tildel eier, prioritet, faktisk funn, hypotese, tidslinje, kilder og frist. Åpne også undersøkelse etter internt tips.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-01",
+      "gate": "G1",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Én sak kan samle flere signaler uten å slette opphav; avslutning krever selvstendig konklusjon."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-044",
+      "title": "INV-02 Advokatfortrolighet",
+      "text": "Advokatfortrolighet. Skill oppdragets virkeområde fra unntak ved rettsstillingsvurdering eller rettssak. Flagget informasjon krever faglig kontroll før deling.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-02",
+      "gate": "G1",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "AT-02",
+      "priority": "could",
+      "acceptance": [
+        "Fortrolig vedlegg holdes utenfor rapportutkast og eksport til ansvarlig har dokumentert konkret vurdering."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-045",
+      "title": "INV-03 Skjermet sak",
+      "text": "Skjermet sak. Egen tilgangsgruppe, eget søkeområde og adskilte varsler. Stopp automatisk kundehenvendelse som kan avsløre undersøkelse.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-03",
+      "gate": "G1",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "AT-07",
+      "priority": "could",
+      "acceptance": [
+        "Portal, faktura, standardwebhook, supportsøk og generativ assistent røper verken rapport eller saksstatus."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-046",
+      "title": "INV-04 Rapportutkast",
+      "text": "Rapportutkast. Sett sammen landtilpasset utkast med hendelser, parter, beløp, begrunnelse og relevante vedlegg. Skill fakta fra antakelser.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-04",
+      "gate": "G1",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "AT-08",
+      "priority": "could",
+      "acceptance": [
+        "Manglende obligatorisk felt stopper klargjøring. Beslutning om å rapportere eller ikke har navngitt ansvarlig."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-047",
+      "title": "INV-05 Forsendelse og kvittering",
+      "text": "Forsendelse og kvittering. Støtt godkjent portalrutine fra pilot. Logg godkjenning, faktisk forsendelse, referanse, avvisning, mottak og eventuell retting.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-05",
+      "gate": "G1",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "AT-08",
+      "priority": "could",
+      "acceptance": [
+        "En eksportert fil er aldri «mottatt». Uavklart sending går til avstemming; ingen blind repetisjon."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-048",
+      "title": "INV-06 Nasjonal adapter",
+      "text": "Nasjonal adapter. Aktiver maskinell levering bare etter kundens mandat, godkjent teknisk tilgang og dokumentert ende-til-ende-test per land.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Undersøkelse, taushet og rapportering · INV-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INV-06",
+      "gate": "G2",
+      "owner": "Rapporteringsansvarlig",
+      "test_run": "AT-08",
+      "priority": "could",
+      "acceptance": [
+        "Norsk MFR-test kobler versjon og kvittering. Uten verifisert kanal er manuell innlevering fortsatt tilgjengelig."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-049",
+      "title": "PRV-01 Dokumentert grunnlag",
+      "text": "Dokumentert grunnlag. Knytt formål, grunnlag, dataklasse, tilgang og lagringsregel til hver behandling. Vurder særkategorier, biometrisk ID og straffedata separat.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-01",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Manglende godkjent grunnlag stanser aktuell kilde eller analyse; samtykke antas ikke som standard."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-050",
+      "title": "PRV-02 Beviskjede",
+      "text": "Beviskjede. Lagre opptakstid, gyldighetstid, utsteder, kilde-ID, filhash og versjon i bevismanifest; avtal hvilke kildedata som kan arkiveres.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-02",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "must",
+      "acceptance": [
+        "Endring av en arkivert fil oppdages; eksport kan verifiseres uten direkte tilgang til produksjon."
+      ]
+    },
+    {
+      "id": "R-051",
+      "title": "PRV-03 Lagringsmotor",
+      "text": "Lagringsmotor. Velg frist ut fra land, datatype, kundeforhold eller enkelttransaksjon og avslutningsstatus; logg hjemmel for særregel.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-03",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "AT-09",
+      "priority": "could",
+      "acceptance": [
+        "To norske testkunder med ordinære og forsterkede tiltak ved avslutning får relevante ulike frister."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-052",
+      "title": "PRV-04 Sletting og bevaring",
+      "text": "Sletting og bevaring. Slett fra aktive lagre, søk, vedlegg og mellomlager. Tidsavgrens lovlig bevaringspålegg; logg sletting uten identifiserende rådata.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-04",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "AT-09",
+      "priority": "could",
+      "acceptance": [
+        "Etter gjenoppretting spilles slettelogg før tilgang åpnes; utløpt pålegg går til frigivelse og sletting."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-053",
+      "title": "PRV-05 Personvernrettigheter",
+      "text": "Personvernrettigheter. Etabler verifisert mottak av krav om innsyn, retting og annen behandling. Sensitive unntak vurderes av ansvarlig.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-05",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "AT-07",
+      "priority": "could",
+      "acceptance": [
+        "Standard eksport inneholder ikke undersøkelser; ansvarlig kan begrunne både utlevering og lovlig unntak."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-054",
+      "title": "PRV-06 Databehandlerkjede",
+      "text": "Databehandlerkjede. Dokumenter roller per formål, databehandleravtale, underleverandører, lokasjoner, fjernaksess og overføringsgrunnlag.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Bevis, personvern og sletting · PRV-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "PRV-06",
+      "gate": "G1",
+      "owner": "Personvern- og sikkerhetsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Ugodkjent tredjelandsstøtte sperres. DPIA og eventuell rest-/overføringsrisiko er avklart før produksjon."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-055",
+      "title": "SEC-01 Isolering",
+      "text": "Isolering. Bind virksomhet til verifisert identitet og medlemskap. Håndhev saks- og objekttilgang i API, SQL, filer, køer, søk og eksport.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-01",
+      "gate": "G1",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "AT-07, AT-10",
+      "priority": "could",
+      "acceptance": [
+        "Bytte av ID i URL, rapport, fil eller jobbkø gir ingen data fra annen virksomhet; negative tester i byggløpet."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-056",
+      "title": "SEC-02 Identitet og privilegier",
+      "text": "Identitet og privilegier. Bruk SSO, MFA og separat tjenesteidentitet. Tidsbegrens støtte etter bestilling; krev godkjenning, logging og tilbakekall.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-02",
+      "gate": "G1",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Support uten aktiv tilgang kan bare se tekniske driftstall. En sperret bruker kan ikke gjenbruke en sesjon for nye sensitive handlinger."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-057",
+      "title": "SEC-03 Beskyttelse",
+      "text": "Beskyttelse. Krypter trafikk og lagring. Bruk administrerte identiteter, hemmelighetshvelv, private endepunkter for datalagre og dokumentert nøkkelrotasjon.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-03",
+      "gate": "G1",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Lekkasjeprøve finner ingen hemmeligheter i kode eller logger; en avviklet nøkkel kan ikke brukes."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-058",
+      "title": "SEC-04 Dokumentinngang",
+      "text": "Dokumentinngang. Karantene, filtypekontroll, størrelse, skadevaresjekk og isolert behandling. Dokument er ubetrodd input også for KI.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-04",
+      "gate": "G1",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Testfil med skadevaresignatur kommer ikke til saksbehandler eller tekstuttrekk."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-059",
+      "title": "SEC-05 Utviklingssikkerhet",
+      "text": "Utviklingssikkerhet. Trusselmodellér flater; kjør kode-, avhengighets-, hemmelighets- og infrastrukturkontroll. Avtal respons og ansvar ved brudd.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-05",
+      "gate": "G1",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Ingen kritiske eller uavklarte høye funn i pilotomfang; uavhengig test dekker krysskundetilgang og skjermet sak."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-060",
+      "title": "SEC-06 Enterprise-administrasjon",
+      "text": "Enterprise-administrasjon. Støtt katalogprovisjonering, tilgangsrevisjon, nødstilgang og attestasjon. Tilby dedikert datalagring etter avtale.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Virksomhetsskille og sikkerhet · SEC-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "SEC-06",
+      "gate": "G2",
+      "owner": "Sikkerhetsarkitekt",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Deprovisjonering trekker tilgang tilbake; nødstilgang utløser varsel, utløper og gjennomgås i ettertid."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-061",
+      "title": "INT-01 Eget produkt",
+      "text": "Eget produkt. Opprett virksomhet, abonnement, tillatte moduler, land, administrator og separate miljøer. Fakturagrunnlag bruker brukstall uten saksinnhold.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-01",
+      "gate": "G1",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Ny virksomhet fullfører onboarding uten LawSaaS, eksisterende saks-ID eller annen produktlisens."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-062",
+      "title": "INT-02 Partner-API",
+      "text": "Partner-API. Versjoner kontrakter, scopes, feil og endringslogg. Verifiser token, audience og klient; bruk korrelasjons-ID og kvoter per virksomhet.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-02",
+      "gate": "G1",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "AT-10",
+      "priority": "should",
+      "acceptance": [
+        "Gjentatt opprettelse med samme nøkkel og innhold gir samme ID; ulikt innhold gir 409."
+      ]
+    },
+    {
+      "id": "R-063",
+      "title": "INT-03 Hendelser",
+      "text": "Hendelser. Publiser minimale statusmeldinger via outbox. Signer webhooks og krev tidsvindu, hendelses-ID, duplikatvern og sikker destinasjon.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-03",
+      "gate": "G1",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "AT-10",
+      "priority": "should",
+      "acceptance": [
+        "To leveringer gir én forretningseffekt. Mottaker avviser feil signatur og for gammel melding."
+      ]
+    },
+    {
+      "id": "R-064",
+      "title": "INT-04 Rett til oppslag",
+      "text": "Rett til oppslag. Koble hver leverandørnøkkel og registertilgang til avtalt rett, omfang og formål. Ikke gjenbruk mellom virksomheter.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-04",
+      "gate": "G1",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Når fullmakten trekkes, opphører oppslag; cache eller annen virksomhets tilgang kan ikke brukes som omvei."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-065",
+      "title": "INT-05 Migrering og exit",
+      "text": "Migrering og exit. Importer fra dokumentert mal med validering, karantene og avstemming; eksporter tillatt struktur og vedlegg med manifest ved opphør.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-05",
+      "gate": "G2",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Testimport kan kjøres på nytt uten dubletter; eier attesterer avstemming og tidspunkt for sletting."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-066",
+      "title": "INT-06 Bruk og profilering av tjenesten",
+      "text": "Bruk og profilering av tjenesten. Støtt avtalt white-label, godkjente domener, kvoter og forbruksoversikt. Stans nye kommersielle oppslag kontrollert, ikke hasteoppgaver.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · API-er, partnere og produktadministrasjon · INT-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "INT-06",
+      "gate": "G2",
+      "owner": "Integrasjonsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En kvotegrense stenger ikke tilgang til skjermet rapportering eller rettidig behandling av aktive varsler."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-067",
+      "title": "AIA-01 Kildestøttet dokumentuttrekk",
+      "text": "Kildestøttet dokumentuttrekk. Returner verdi, sitatposisjon, dokumentversjon og usikkerhet. Marker manglende støtte; krev verifisering av kritiske felt.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-01",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "AT-12",
+      "priority": "could",
+      "acceptance": [
+        "På et tvetydig eierskapsdokument er verdien uavklart, ikke gjettet. Hvert tall lenkes til originalside."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-068",
+      "title": "AIA-02 Oppsummering",
+      "text": "Oppsummering. Skill faktiske funn, påstander, åpne spørsmål og forslag i maskinelt utkast. Vis modell- og instruksversjon.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-02",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Et utkast uten dokumentert kilde kan ikke bli del av endelig bevispakke uten menneskelig verifisering."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-069",
+      "title": "AIA-03 Ingen beslutningsfullmakt",
+      "text": "Ingen beslutningsfullmakt. Modellen mangler rett til å godkjenne, avslå, endre policy, sende rapport eller instruere betaling. Begrens data per rolle og sak.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-03",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "AT-12",
+      "priority": "could",
+      "acceptance": [
+        "Et opplastet dokument som ber om å sende saken til en ekstern mottaker fører til null verktøyhandlinger."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-070",
+      "title": "AIA-04 Datavern",
+      "text": "Datavern. Bruk bare godkjent modell, endepunkt og region; forby trening på kundedata. Deaktiver KI per virksomhet og for skjermet saksrom som standard.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-04",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Test viser at KI er uten tilgang til skjermet sak, og at funksjonen virker med syntetiske eller minimerte data."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-071",
+      "title": "AIA-05 Evaluering",
+      "text": "Evaluering. Sammenlign uttrekk og kildepresisjon på merket datasett per språk og dokumenttype. Mål systematiske feil og overvåk nye versjoner.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-05",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "En modell med regressjon rulles ikke ut; vis rapport, ansvarlig og tilbakeføringsbeslutning."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-072",
+      "title": "AIA-06 Tjenesteutfall",
+      "text": "Tjenesteutfall. La deterministiske kontroller og manuell behandling virke ved modellutfall. Ingen tidligere forslag arver verifisert status.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Assistert analyse og modellstyring · AIA-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "AIA-06",
+      "gate": "G2",
+      "owner": "Ansvarlig for KI og personvern",
+      "test_run": "AT-12",
+      "priority": "could",
+      "acceptance": [
+        "Når modellen kobles ut, kan teamet ferdigstille dokumentgjennomgang og kontroll uten tap av spor."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-073",
+      "title": "OPS-01 Oppetid",
+      "text": "Oppetid. Mål kundevendt lesing og inntak med syntetiske prober: mål 99,9 % per kalendermåned. Vis separat eksterne avhengigheter og brukeropplevd feilrate.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-01",
+      "gate": "G1",
+      "owner": "Driftsansvarlig",
+      "test_run": "AT-14",
+      "priority": "could",
+      "acceptance": [
+        "Rapport viser tellende minutter, full nevner og brudd. Manglende telemetri flagges, ikke telles som oppetid."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-074",
+      "title": "OPS-02 Svartid og kapasitet",
+      "text": "Svartid og kapasitet. Mål p95 ≤ 500 ms for oppslag og 202-kvittering ved 50 forespørsler/s, 100 samtidige brukere, 100 000 relasjoner i 30 min.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-02",
+      "gate": "G1",
+      "owner": "Driftsansvarlig",
+      "test_run": "AT-14",
+      "priority": "could",
+      "acceptance": [
+        "Lastetest har <1 % uventede feil; eksternt oppslag er asynkront. P95 og gjennomløp fra sluttbruker vises separat."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-075",
+      "title": "OPS-03 Gjenoppretting",
+      "text": "Gjenoppretting. Mål RPO ≤ 15 min og RTO ≤ 4 timer for kjerneflyten. Øv kvartalsvis på gjenoppretting inkl. tilgang, nøkler og slettelogg.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-03",
+      "gate": "G1",
+      "owner": "Driftsansvarlig",
+      "test_run": "AT-09",
+      "priority": "could",
+      "acceptance": [
+        "Tidsmålt øvelse dokumenterer datatap, oppstart og avstemming; feil blokkerer godkjenning eller utløser ny test."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-076",
+      "title": "OPS-04 Overvåking og hendelse",
+      "text": "Overvåking og hendelse. Varsle på kritiske køer, utdatert kilde, manglende kvittering og kompromittert konto. Foreslått vaktmål: bekreftet mottak innen 15 min.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-04",
+      "gate": "G1",
+      "owner": "Driftsansvarlig",
+      "test_run": "AT-05",
+      "priority": "could",
+      "acceptance": [
+        "Beredskapsøvelse viser mottaker, stedfortreder, tiltak og sikker kanal til berørt virksomhet."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-077",
+      "title": "OPS-05 Rescreening i volum",
+      "text": "Rescreening i volum. Mål 100 000 aktive parter innen 4 timer fra mottatt komplett liste i testmiljø med avtalt leverandørkapasitet. Prioriter utsatte treff tidligere.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-05",
+      "gate": "G2",
+      "owner": "Driftsansvarlig",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Avstemmingsrapport dekker 100 % av testpopulasjonen; et ubehandlet element er synlig og blokkerer grønn status."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-078",
+      "title": "OPS-06 Transaksjonskapasitet",
+      "text": "Transaksjonskapasitet. Test 100 hendelser/s i 30 min, 5 % duplikater og 1 % sene hendelser; p95 fra validert inntak til varsel ≤ 60 s for strømmeregler.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Drift, kvalitet og tjenestenivå · OPS-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "OPS-06",
+      "gate": "G3",
+      "owner": "Driftsansvarlig",
+      "test_run": "AT-11",
+      "priority": "could",
+      "acceptance": [
+        "Ingen avstemmingsdifferanse per valuta eller doble varsler. Tidssvindusregler måles separat etter vinduets slutt."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G3). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-079",
+      "title": "UX-01 Arbeidskø og detalj",
+      "text": "Arbeidskø og detalj. Prioriter etter hastegrad, frist, eier og årsak. Vis kilde, status og neste handling på detaljsiden; skille systemfeil fra kundeforhold.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-01 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-01",
+      "gate": "G1",
+      "owner": "Design- og produkteier",
+      "test_run": "AT-14",
+      "priority": "must",
+      "acceptance": [
+        "Fem pilotbrukere kan finne et åpent krav, se grunnlaget og tildele det til rett rolle uten veiledning."
+      ]
+    },
+    {
+      "id": "R-080",
+      "title": "UX-02 Universell utforming",
+      "text": "Universell utforming. Bruk WCAG 2.2 AA som produktmål for portal og arbeidsflate. Tilby tastaturnavigasjon, tydelige feil, skjermlesertekst og tekstalternativ til graf.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-02 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-02",
+      "gate": "G1",
+      "owner": "Design- og produkteier",
+      "test_run": "AT-14",
+      "priority": "must",
+      "acceptance": [
+        "Kjerneflyt testes med tastatur og skjermleser; verken farge alene eller dra-og-slipp er nødvendig."
+      ]
+    },
+    {
+      "id": "R-081",
+      "title": "UX-03 Automatiseringsmåling",
+      "text": "Automatiseringsmåling. Rapporter maskinelt ferdige grunnlag og faktisk andel uten manuell innhenting. Vis frafall, totale volum og utelatelser ved siden av prosenten.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-03 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-03",
+      "gate": "G1",
+      "owner": "Design- og produkteier",
+      "test_run": "AT-01",
+      "priority": "could",
+      "acceptance": [
+        "Utvalget lar seg gjenskape fra logg. Menneskelige sluttgodkjenninger telles aldri som helautomatiske beslutninger."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G1). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-082",
+      "title": "UX-04 Nordiske språk",
+      "text": "Nordiske språk. Lever bokmål, svensk, dansk og engelsk for aktiv bølge; lokaliser dato, valuta, tidssone og myndighetstekst. Legg til finsk/islandsk før respektive lanseringer.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-04 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-04",
+      "gate": "G2",
+      "owner": "Design- og produkteier",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Test med lokale fagbrukere bekrefter at «klar for vurdering» ikke kan forveksles med endelig godkjent."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-083",
+      "title": "UX-05 Ledelsesrapport",
+      "text": "Ledelsesrapport. Gi virksomheten rapport om restanser, risikofordeling, kildekvalitet, manuell tid og tiltak. Begrens detaljer til autorisert rolle.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-05 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-05",
+      "gate": "G2",
+      "owner": "Design- og produkteier",
+      "test_run": "Kravtest",
+      "priority": "could",
+      "acceptance": [
+        "Kommersiell administrator kan se antall forbrukte kontroller, men ikke kunder, rapportstatus eller treff."
+      ],
+      "status": "deferred",
+      "note": "Utenfor 90-minutters prototype (port G2). Kan bygges videre på den simulerte backenden senere."
+    },
+    {
+      "id": "R-084",
+      "title": "UX-06 Landgodkjenning FI/IS",
+      "text": "Landgodkjenning FI/IS. Gjenta juridisk signering, test av lokalt språk, eID, eierkilder, rapporteringsrutiner og oppbevaring før Finland eller Island åpnes.",
+      "source": "Kravspesifikasjon §06 Kravkatalog · Arbeidsflater, måltall og tilgjengelighet · UX-06 (AML_kravregister.xlsx › Krav)",
+      "spec_id": "UX-06",
+      "gate": "G4",
+      "owner": "Design- og produkteier",
+      "test_run": "AT-13",
+      "priority": "must",
+      "acceptance": [
+        "En ikke-godkjent landspakke kan ikke velges i produksjon, selv om et lokalt språk er aktivert."
+      ]
+    }
+  ]
+}

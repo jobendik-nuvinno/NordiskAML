@@ -1,0 +1,580 @@
+openapi: 3.1.0
+info:
+  title: Nordisk AML – ekstern kjernekontrakt
+  version: 1.0.0
+  description: Designkontrakt, ikke en operativ tjeneste. Eksempeldomener må erstattes. Virksomhet utledes av token og
+    serverkartlegging, ikke fra request. Ingen ekstern tilgang til undersøkelser eller sluttbeslutninger.
+servers:
+- url: https://api.example.invalid
+paths:
+  /v1/checks:
+    post:
+      operationId: createCheck
+      security:
+      - partnerOAuth:
+        - checks.write
+      responses:
+        '202':
+          description: Akseptert for behandling
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Check'
+          headers:
+            Location:
+              description: Statusressurs
+              schema:
+                type: string
+                format: uri-reference
+        '400':
+          description: Ugyldig syntaks
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Ugyldig autentisering
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Mangler tillatelse eller aktivert funksjon
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Ressurs ikke tilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Konflikt med idempotensnøkkel
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Semantisk valideringsfeil
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Kvoten er nådd
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Tjenesten utilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 128
+        description: Unik per virksomhet og operasjon. Identisk gjentakelse innen 24 timer returnerer samme ressurs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCheck'
+  /v1/checks/{id}:
+    get:
+      operationId: getCheck
+      security:
+      - partnerOAuth:
+        - checks.read
+      responses:
+        '200':
+          description: Nøytral status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Check'
+        '400':
+          description: Ugyldig syntaks
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Ugyldig autentisering
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Mangler tillatelse eller aktivert funksjon
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Ressurs ikke tilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Kvoten er nådd
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Tjenesten utilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+  /v1/transactions/batches:
+    post:
+      operationId: ingestBatch
+      security:
+      - partnerOAuth:
+        - transactions.write
+      responses:
+        '202':
+          description: Akseptert for behandling
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+          headers:
+            Location:
+              description: Statusressurs
+              schema:
+                type: string
+                format: uri-reference
+        '400':
+          description: Ugyldig syntaks
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Ugyldig autentisering
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Mangler tillatelse eller aktivert funksjon
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Ressurs ikke tilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Konflikt med idempotensnøkkel
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Semantisk valideringsfeil
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Kvoten er nådd
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Tjenesten utilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 128
+        description: Unik per virksomhet og operasjon. Identisk gjentakelse innen 24 timer returnerer samme ressurs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Batch'
+  /v1/operations/{id}:
+    get:
+      operationId: getOperation
+      security:
+      - partnerOAuth:
+        - operations.read
+      responses:
+        '200':
+          description: Nøytral status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        '400':
+          description: Ugyldig syntaks
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Ugyldig autentisering
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Mangler tillatelse eller aktivert funksjon
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Ressurs ikke tilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Kvoten er nådd
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Tjenesten utilgjengelig
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+components:
+  securitySchemes:
+    partnerOAuth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://identity.example.invalid/oauth2/token
+          scopes:
+            checks.write: Opprette godkjente kontrolltyper
+            checks.read: Lese nøytral kontrollstatus
+            transactions.write: Levere transaksjonsbatch
+            operations.read: Lese inntaksstatus
+  schemas:
+    NewCheck:
+      type: object
+      additionalProperties: false
+      required:
+      - externalReference
+      - country
+      - sector
+      - partyType
+      - subjectReference
+      - serviceCode
+      properties:
+        externalReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        country:
+          type: string
+          enum:
+          - 'NO'
+          - SE
+          - DK
+          - FI
+          - IS
+        sector:
+          type: string
+          enum:
+          - legal
+          - accounting
+          - real_estate
+          - payments
+        partyType:
+          type: string
+          enum:
+          - person
+          - organisation
+        subjectReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        serviceCode:
+          type: string
+          minLength: 1
+          maxLength: 60
+      description: Bruk ugjennomsiktige, virksomhetsinterne referanser til lovlig registrerte parter. Ingen fritekst,
+        personnummer eller undersøkelsesopplysninger her. Land og sektor må være aktivert.
+    Check:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - externalReference
+      - status
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        externalReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        status:
+          type: string
+          enum:
+          - received
+          - processing
+          - customer_action_requested
+          - review_ready
+          - closed
+        updatedAt:
+          type: string
+          format: date-time
+    Transaction:
+      type: object
+      additionalProperties: false
+      required:
+      - sourceId
+      - externalReference
+      - relationshipReference
+      - amount
+      - currency
+      - direction
+      - occurredAt
+      - counterpartyReference
+      - type
+      properties:
+        sourceId:
+          type: string
+          minLength: 1
+          maxLength: 100
+        externalReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        relationshipReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: string
+          pattern: ^\d{1,15}(\.\d{1,6})?$
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        direction:
+          type: string
+          enum:
+          - credit
+          - debit
+        occurredAt:
+          type: string
+          format: date-time
+        counterpartyReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+        type:
+          type: string
+          enum:
+          - payment
+          - reversal
+        reversesReference:
+          type: string
+          minLength: 1
+          maxLength: 100
+      allOf:
+      - if:
+          properties:
+            type:
+              const: reversal
+        then:
+          required:
+          - reversesReference
+    Batch:
+      type: object
+      additionalProperties: false
+      required:
+      - sourceBatchId
+      - transactions
+      properties:
+        sourceBatchId:
+          type: string
+          minLength: 1
+          maxLength: 100
+        transactions:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/Transaction'
+    Operation:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - status
+      - acceptedCount
+      - rejectedCount
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+          - failed
+        acceptedCount:
+          type: integer
+          minimum: 0
+        rejectedCount:
+          type: integer
+          minimum: 0
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - correlationId
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        correlationId:
+          type: string
+          format: uuid
+    PublicEvent:
+      type: object
+      additionalProperties: false
+      required:
+      - eventId
+      - type
+      - occurredAt
+      - checkId
+      - status
+      - revision
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - check.status_updated
+        occurredAt:
+          type: string
+          format: date-time
+        checkId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - received
+          - processing
+          - customer_action_requested
+          - review_ready
+          - closed
+        revision:
+          type: integer
+          minimum: 1
+webhooks:
+  checkStatusUpdated:
+    post:
+      operationId: deliverPublicEvent
+      description: Kombiner tid + punktum + rå requestbody (UTF-8), HMAC-SHA256 med per-kunde nøkkel; signatur som hex.
+        Avvis feil signatur / ±300 s og dedupliser eventId. Ingen skjermede hendelser.
+      parameters:
+      - in: header
+        name: X-AML-Timestamp
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: X-AML-Signature
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: X-AML-Key-Id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicEvent'
+      responses:
+        '204':
+          description: Mottatt / duplikat trygt ignorert
