@@ -13,6 +13,7 @@ export const ACTOR: Record<Role, string> = {
   saksbehandler: 'Saksbehandler Demo',
   godkjenner: 'Faglig godkjenner Demo',
   hvitvaskingsansvarlig: 'Hvitvaskingsansvarlig Demo',
+  admin: 'Kundeadministrator (kommersiell)',
   kunde: 'Kunde (portal)',
   partner: 'Partnerintegrasjon',
 }

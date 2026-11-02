@@ -6,14 +6,15 @@ import { useStore, useToast } from './hooks'
 import { NewCheck } from './NewCheck'
 import { PartnerConsole } from './PartnerConsole'
 import { resetPartnerApi } from '../api/partnerApi'
+import { Insights } from './Insights'
 import { Portal } from './Portal'
 import { ConcernForm, RestrictedRoom } from './Restricted'
 import { resetRestricted } from '../api/restrictedServer'
 import { Workqueue } from './Workqueue'
 
-export type Page = { name: 'queue' } | { name: 'new' } | { name: 'observe' } | { name: 'restricted' } | { name: 'case'; id: string }
+export type Page = { name: 'queue' } | { name: 'new' } | { name: 'observe' } | { name: 'restricted' } | { name: 'insights' } | { name: 'case'; id: string }
 
-const ROLES: Role[] = ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig', 'kunde', 'partner']
+const ROLES: Role[] = ['saksbehandler', 'godkjenner', 'hvitvaskingsansvarlig', 'admin', 'kunde', 'partner']
 
 export function App() {
   const state = useStore()
@@ -50,6 +51,9 @@ export function App() {
               <button className={page.name === 'new' ? 'on' : ''} aria-current={page.name === 'new' ? 'page' : undefined} onClick={() => setPage({ name: 'new' })}>Ny kontroll</button>
             )}
             <button className={page.name === 'observe' ? 'on' : ''} aria-current={page.name === 'observe' ? 'page' : undefined} onClick={() => setPage({ name: 'observe' })}>Meld observasjon</button>
+            {role !== 'saksbehandler' && (
+              <button className={page.name === 'insights' ? 'on' : ''} aria-current={page.name === 'insights' ? 'page' : undefined} onClick={() => setPage({ name: 'insights' })}>Innsikt</button>
+            )}
             {role === 'hvitvaskingsansvarlig' && (
               <button className={page.name === 'restricted' ? 'on' : ''} aria-current={page.name === 'restricted' ? 'page' : undefined} onClick={() => setPage({ name: 'restricted' })}>Skjermet arbeidsrom</button>
             )}
@@ -68,6 +72,8 @@ export function App() {
           )}
           {page.name === 'restricted' && role === 'hvitvaskingsansvarlig' && <RestrictedRoom role={role} />}
           {internal && page.name === 'case' && <CaseView role={role} id={page.id} back={() => setPage({ name: 'queue' })} />}
+          {internal && page.name === 'insights' && role !== 'saksbehandler' && <Insights view="intern" />}
+          {role === 'admin' && <Insights view="kommersiell" />}
           {role === 'kunde' && <Portal />}
           {role === 'partner' && <PartnerConsole />}
         </section>

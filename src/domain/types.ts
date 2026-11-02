@@ -1,6 +1,6 @@
 // Logisk kjerne etter kravspesifikasjonen §09/§10. Alle ID-er er ugjennomsiktige; alle data er fiktive.
 
-export type Role = 'saksbehandler' | 'godkjenner' | 'hvitvaskingsansvarlig' | 'kunde' | 'partner'
+export type Role = 'saksbehandler' | 'godkjenner' | 'hvitvaskingsansvarlig' | 'admin' | 'kunde' | 'partner'
 export type Country = 'NO' | 'SE' | 'DK' | 'FI' | 'IS'
 export type Sector = 'legal' | 'accounting' | 'real_estate' | 'payments'
 export type PartyType = 'person' | 'organisation'

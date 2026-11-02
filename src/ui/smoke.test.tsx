@@ -8,6 +8,7 @@ import { PartnerConsole } from './PartnerConsole'
 import { Portal } from './Portal'
 import { Workqueue } from './Workqueue'
 import { RestrictedRoom } from './Restricted'
+import { Insights } from './Insights'
 import { reportConcern } from '../api/restrictedServer'
 
 setTiming([0, 0], 0)
@@ -37,5 +38,12 @@ describe('røyktest: alle visninger rendrer', () => {
     await reportConcern('saksbehandler', { caseId: null, subjectName: 'Avbrutt oppdrag Eksempel', kind: 'manuell_observasjon', description: 'Kunden trakk seg ved spørsmål om midler' })
     expect(renderToString(<RestrictedRoom role="hvitvaskingsansvarlig" />)).toContain('Avbrutt oppdrag Eksempel')
     expect(renderToString(<RestrictedRoom role="saksbehandler" />)).not.toContain('Avbrutt oppdrag Eksempel')
+  })
+
+  it('innsikt: intern og kommersiell visning', () => {
+    expect(renderToString(<Insights view="intern" />)).toContain('Sund Eksempel AB')
+    const com = renderToString(<Insights view="kommersiell" />)
+    expect(com).not.toContain('Sund Eksempel AB')
+    expect(com).not.toContain('Havbris')
   })
 })
